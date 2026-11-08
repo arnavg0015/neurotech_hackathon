@@ -21,19 +21,20 @@ import numpy as np
 import pandas as pd
 
 ROOT = Path(__file__).resolve().parents[1]
-RAW_EEG = ROOT / "data" / "EEG_Data"
-RAW_STIM = ROOT / "data" / "Stimulation_Data"
+RAW_EEG = ROOT / "data" / "EEG Data"
+RAW_STIM = ROOT / "data" / "Stimulation Data"
 OUT = ROOT / "data_processed"
 
 
 def main():
     # ------------------------------------------------------------------ flags
     SUBJECT_IDS = {"Yuan_Tina": "sub01"}   # raw filename name -> subject ID
+    DROP_CHANNELS = ["M1", "M2"]           # removed from all recordings
     L_FREQ = 0.5          # high-pass (Hz)
-    H_FREQ = 45.0         # low-pass (Hz)
+    H_FREQ = 125.0         # low-pass (Hz)
     LINE_FREQ = 60.0      # mains noise (US)
-    SFREQ = 250.0         # resample target (Hz)
-    BAD_Z = 5.0           # robust z-score threshold for noisy channels
+    SFREQ = 500.0         # resample target (Hz)
+    BAD_Z = 10.0           # robust z-score threshold for noisy channels
     FLAT_SD = 1e-7        # channels with SD below this (V) are flat
     INTERPOLATE_BADS = True
     RUN_ICA = True
@@ -67,6 +68,9 @@ def main():
         try:
             # ---- load + montage (positions needed for interpolation)
             raw = mne.io.read_raw_ant(cnt, preload=True, verbose="error")
+            drop = [c for c in raw.ch_names if c.upper() in {d.upper() for d in DROP_CHANNELS}]
+            raw.drop_channels(drop)
+            print(f"  dropped: {drop}")
             raw.set_montage("colin27_1005", match_case=False, on_missing="warn")
             orig_sfreq = raw.info["sfreq"]
 
@@ -137,7 +141,7 @@ def main():
                       source_file=str(cnt.relative_to(ROOT)),
                       orig_sfreq=orig_sfreq, sfreq=raw.info["sfreq"],
                       duration_s=round(raw.times[-1], 2),
-                      n_channels=len(raw.ch_names),
+                      n_channels=len(raw.ch_names), dropped_channels=drop,
                       bad_channels=bads, n_bad=len(bads),
                       interpolated=INTERPOLATE_BADS and bool(bads),
                       ica_components_removed=ica_excluded,
