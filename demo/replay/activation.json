@@ -1,0 +1,683 @@
+{
+  "description": "Curated demonstration selected using known model outcomes; not a new test evaluation.",
+  "duration": 60,
+  "trial": 5,
+  "sample_rate": 500,
+  "channels": [
+    "Fp1",
+    "Fp2",
+    "F9",
+    "F7",
+    "F3",
+    "Fz",
+    "F4",
+    "F8",
+    "F10",
+    "T7",
+    "C3",
+    "C4",
+    "T8",
+    "Cz",
+    "p7",
+    "p3",
+    "pz",
+    "p4",
+    "p8",
+    "oz",
+    "o1"
+  ],
+  "units": "microvolts",
+  "preprocessing": {
+    "clock_offset_s": 15.6,
+    "dropped_channels": [
+      "M1",
+      "M2",
+      "O2"
+    ],
+    "montage": "colin27_1005",
+    "notch_hz": [
+      60.0,
+      120.0,
+      180.0,
+      240.0,
+      300.0,
+      360.0,
+      420.0,
+      480.0
+    ],
+    "filter_method": "fir",
+    "filter_phase": "zero",
+    "bandpass_hz": [
+      0.5,
+      125
+    ],
+    "sample_rate_hz": 500,
+    "bad_channel_robust_z": 10,
+    "flat_sd_volts": 1e-07,
+    "interpolate_bads": true,
+    "reference": "average",
+    "ica_method": "fastica",
+    "ica_fit_highpass_hz": 1.0,
+    "ica_max_components": 20,
+    "ica_max_exclude": 3,
+    "ica_seed": 97,
+    "cleaning_fit": "independent unsupervised cleaning per full recording, including validation and test",
+    "epoch_seconds": 1.0,
+    "baseline_seconds": [
+      -0.2,
+      0
+    ],
+    "baseline_endpoint": "excludes onset",
+    "epoch_policy": "one full post-onset epoch per event; ceil to next sample",
+    "incomplete_event_policy": "include if a full epoch fits the actual recorded interval"
+  },
+  "source_origin_in_eeg_s": 3.76015796661377,
+  "source_stimulus_origin_epoch_ms": 1794093858225.0,
+  "model_sha256": "d51f48a6c09c8964d48ef3c6d843bc587fc91a61677423993f53bf68714aa3a1",
+  "sources": {
+    "results/hackathon_pipeline/activate_classifier.pkl": "d51f48a6c09c8964d48ef3c6d843bc587fc91a61677423993f53bf68714aa3a1",
+    "results/hackathon_pipeline/trial_5_preprocessed_raw.fif": "97cc940460d3286c124c53eedcbab0b7d6240aecedf25cf5b7f7288acb7cf749",
+    "results/hackathon_pipeline/epochs.npz": "aec7260f4ec68ce4e4e19b839503b7fd04bbd0f74ca77a8706057c50566db0b8",
+    "results/hackathon_pipeline/epoch_split.csv": "b81380226f8b59fe8bd86f5bc8439b3c2524033aede6b1fc3187ee084b8530c1",
+    "data/Stimulation Data/Experiment 2/Trial 5/subject1_all.csv": "ca3b049b5982671edba8c5c0282769796266a1e53a30f708abff8e781b46d4df"
+  },
+  "epoch_policy": "Reuse original baseline-corrected epochs; omit windows cut by clip boundaries.",
+  "clips": [
+    {
+      "start": 0,
+      "end": 10,
+      "activate_event": 8,
+      "source_start_sample": 2247,
+      "source_stop_sample": 7247,
+      "source_start_s": 0.7338420333862299,
+      "source_end_s": 10.73384203338623
+    },
+    {
+      "start": 10,
+      "end": 20,
+      "activate_event": 50,
+      "source_start_sample": 28147,
+      "source_stop_sample": 33147,
+      "source_start_s": 52.53384203338623,
+      "source_end_s": 62.53384203338623
+    },
+    {
+      "start": 20,
+      "end": 30,
+      "activate_event": 90,
+      "source_start_sample": 52397,
+      "source_stop_sample": 57397,
+      "source_start_s": 101.03384203338622,
+      "source_end_s": 111.03384203338622
+    },
+    {
+      "start": 30,
+      "end": 40,
+      "activate_event": 102,
+      "source_start_sample": 59414,
+      "source_stop_sample": 64414,
+      "source_start_s": 115.06784203338623,
+      "source_end_s": 125.06784203338623
+    },
+    {
+      "start": 40,
+      "end": 50,
+      "activate_event": 136,
+      "source_start_sample": 80580,
+      "source_stop_sample": 85580,
+      "source_start_s": 157.39984203338622,
+      "source_end_s": 167.39984203338622
+    },
+    {
+      "start": 50,
+      "end": 60,
+      "activate_event": 178,
+      "source_start_sample": 106680,
+      "source_stop_sample": 111680,
+      "source_start_s": 209.59984203338624,
+      "source_end_s": 219.59984203338624
+    }
+  ],
+  "events": [
+    {
+      "id": 1,
+      "word": "Blank",
+      "kind": "blank",
+      "start": 0,
+      "end": 0.7660578689575201,
+      "input_start": null,
+      "ready_at": null,
+      "clip": 1
+    },
+    {
+      "id": 2,
+      "word": "slipper",
+      "kind": "word",
+      "start": 0.7660578689575201,
+      "end": 2.1994580154418952,
+      "input_start": 0.768,
+      "ready_at": 1.768,
+      "clip": 1
+    },
+    {
+      "id": 3,
+      "word": "Blank",
+      "kind": "blank",
+      "start": 2.1994580154418952,
+      "end": 3.36605786895752,
+      "input_start": 2.2,
+      "ready_at": 3.2,
+      "clip": 1
+    },
+    {
+      "id": 4,
+      "word": "duvet",
+      "kind": "word",
+      "start": 3.36605786895752,
+      "end": 4.46605786895752,
+      "input_start": 3.368,
+      "ready_at": 4.368,
+      "clip": 1
+    },
+    {
+      "id": 5,
+      "word": "Blank",
+      "kind": "blank",
+      "start": 4.46605786895752,
+      "end": 5.6660578689575205,
+      "input_start": 4.468,
+      "ready_at": 5.468,
+      "clip": 1
+    },
+    {
+      "id": 6,
+      "word": "thermostat",
+      "kind": "word",
+      "start": 5.6660578689575205,
+      "end": 6.799357917785645,
+      "input_start": 5.668,
+      "ready_at": 6.668,
+      "clip": 1
+    },
+    {
+      "id": 7,
+      "word": "Blank",
+      "kind": "blank",
+      "start": 6.799357917785645,
+      "end": 7.9994580154418955,
+      "input_start": 6.8,
+      "ready_at": 7.8,
+      "clip": 1
+    },
+    {
+      "id": 8,
+      "word": "activate",
+      "kind": "word",
+      "start": 7.9994580154418955,
+      "end": 9.099458015441895,
+      "input_start": 8.0,
+      "ready_at": 9.0,
+      "clip": 1
+    },
+    {
+      "id": 9,
+      "word": "Blank",
+      "kind": "blank",
+      "start": 9.099458015441895,
+      "end": 10,
+      "input_start": null,
+      "ready_at": null,
+      "clip": 1
+    },
+    {
+      "id": 43,
+      "word": "Blank",
+      "kind": "blank",
+      "start": 10,
+      "end": 10.965958015441899,
+      "input_start": null,
+      "ready_at": null,
+      "clip": 2
+    },
+    {
+      "id": 44,
+      "word": "sponge",
+      "kind": "word",
+      "start": 10.965958015441899,
+      "end": 12.299258064270028,
+      "input_start": 10.966,
+      "ready_at": 11.966,
+      "clip": 2
+    },
+    {
+      "id": 45,
+      "word": "Blank",
+      "kind": "blank",
+      "start": 12.29925806427002,
+      "end": 13.299258064270028,
+      "input_start": null,
+      "ready_at": null,
+      "clip": 2
+    },
+    {
+      "id": 46,
+      "word": "pillow",
+      "kind": "word",
+      "start": 13.29925806427002,
+      "end": 14.599258064270025,
+      "input_start": 13.3,
+      "ready_at": 14.3,
+      "clip": 2
+    },
+    {
+      "id": 47,
+      "word": "Blank",
+      "kind": "blank",
+      "start": 14.599258064270025,
+      "end": 15.63265796661377,
+      "input_start": 14.6,
+      "ready_at": 15.6,
+      "clip": 2
+    },
+    {
+      "id": 48,
+      "word": "bookshelf",
+      "kind": "word",
+      "start": 15.63265796661377,
+      "end": 16.932557868957524,
+      "input_start": 15.634,
+      "ready_at": 16.634,
+      "clip": 2
+    },
+    {
+      "id": 49,
+      "word": "Blank",
+      "kind": "blank",
+      "start": 16.932557868957524,
+      "end": 17.999258064270016,
+      "input_start": 16.934,
+      "ready_at": 17.934,
+      "clip": 2
+    },
+    {
+      "id": 50,
+      "word": "activate",
+      "kind": "word",
+      "start": 17.999258064270023,
+      "end": 19.13265796661377,
+      "input_start": 18.0,
+      "ready_at": 19.0,
+      "clip": 2
+    },
+    {
+      "id": 51,
+      "word": "Blank",
+      "kind": "blank",
+      "start": 19.13265796661377,
+      "end": 20,
+      "input_start": null,
+      "ready_at": null,
+      "clip": 2
+    },
+    {
+      "id": 83,
+      "word": "Blank",
+      "kind": "blank",
+      "start": 20,
+      "end": 20.965758064270034,
+      "input_start": null,
+      "ready_at": null,
+      "clip": 3
+    },
+    {
+      "id": 84,
+      "word": "teapot",
+      "kind": "word",
+      "start": 20.965758064270034,
+      "end": 22.365857917785647,
+      "input_start": 20.966,
+      "ready_at": 21.966,
+      "clip": 3
+    },
+    {
+      "id": 85,
+      "word": "Blank",
+      "kind": "blank",
+      "start": 22.365857917785647,
+      "end": 23.365857917785647,
+      "input_start": null,
+      "ready_at": null,
+      "clip": 3
+    },
+    {
+      "id": 86,
+      "word": "curtain",
+      "kind": "word",
+      "start": 23.365857917785647,
+      "end": 24.799157966613777,
+      "input_start": 23.366,
+      "ready_at": 24.366,
+      "clip": 3
+    },
+    {
+      "id": 87,
+      "word": "Blank",
+      "kind": "blank",
+      "start": 24.799157966613777,
+      "end": 25.799157966613777,
+      "input_start": null,
+      "ready_at": null,
+      "clip": 3
+    },
+    {
+      "id": 88,
+      "word": "scissors",
+      "kind": "word",
+      "start": 25.799157966613777,
+      "end": 26.865857917785647,
+      "input_start": 25.8,
+      "ready_at": 26.8,
+      "clip": 3
+    },
+    {
+      "id": 89,
+      "word": "Blank",
+      "kind": "blank",
+      "start": 26.865857917785647,
+      "end": 27.999157966613794,
+      "input_start": 26.866,
+      "ready_at": 27.866,
+      "clip": 3
+    },
+    {
+      "id": 90,
+      "word": "activate",
+      "kind": "word",
+      "start": 27.99915796661378,
+      "end": 29.03245801544189,
+      "input_start": 28.0,
+      "ready_at": 29.0,
+      "clip": 3
+    },
+    {
+      "id": 91,
+      "word": "Blank",
+      "kind": "blank",
+      "start": 29.032458015441904,
+      "end": 30,
+      "input_start": null,
+      "ready_at": null,
+      "clip": 3
+    },
+    {
+      "id": 95,
+      "word": "Blank",
+      "kind": "blank",
+      "start": 30,
+      "end": 30.898458015441918,
+      "input_start": null,
+      "ready_at": null,
+      "clip": 4
+    },
+    {
+      "id": 96,
+      "word": "candle",
+      "kind": "word",
+      "start": 30.898458015441904,
+      "end": 32.031758064270036,
+      "input_start": 30.9,
+      "ready_at": 31.9,
+      "clip": 4
+    },
+    {
+      "id": 97,
+      "word": "Blank",
+      "kind": "blank",
+      "start": 32.03175806427002,
+      "end": 33.13185791778565,
+      "input_start": 32.032,
+      "ready_at": 33.032,
+      "clip": 4
+    },
+    {
+      "id": 98,
+      "word": "keyboard",
+      "kind": "word",
+      "start": 33.13185791778565,
+      "end": 34.298357917785665,
+      "input_start": 33.132,
+      "ready_at": 34.132,
+      "clip": 4
+    },
+    {
+      "id": 99,
+      "word": "Blank",
+      "kind": "blank",
+      "start": 34.29835791778565,
+      "end": 35.63175806427,
+      "input_start": 34.3,
+      "ready_at": 35.3,
+      "clip": 4
+    },
+    {
+      "id": 100,
+      "word": "bathrobe",
+      "kind": "word",
+      "start": 35.63175806427002,
+      "end": 36.731758064270025,
+      "input_start": 35.632,
+      "ready_at": 36.632,
+      "clip": 4
+    },
+    {
+      "id": 101,
+      "word": "Blank",
+      "kind": "blank",
+      "start": 36.731758064270025,
+      "end": 37.998357917785654,
+      "input_start": 36.732,
+      "ready_at": 37.732,
+      "clip": 4
+    },
+    {
+      "id": 102,
+      "word": "activate",
+      "kind": "word",
+      "start": 37.998357917785654,
+      "end": 39.39845801544192,
+      "input_start": 38.0,
+      "ready_at": 39.0,
+      "clip": 4
+    },
+    {
+      "id": 103,
+      "word": "Blank",
+      "kind": "blank",
+      "start": 39.3984580154419,
+      "end": 40,
+      "input_start": null,
+      "ready_at": null,
+      "clip": 4
+    },
+    {
+      "id": 129,
+      "word": "Blank",
+      "kind": "blank",
+      "start": 40,
+      "end": 40.36635791778565,
+      "input_start": null,
+      "ready_at": null,
+      "clip": 5
+    },
+    {
+      "id": 130,
+      "word": "blanket",
+      "kind": "word",
+      "start": 40.36635791778565,
+      "end": 41.665357917785656,
+      "input_start": 40.368,
+      "ready_at": 41.368,
+      "clip": 5
+    },
+    {
+      "id": 131,
+      "word": "Blank",
+      "kind": "blank",
+      "start": 41.665357917785656,
+      "end": 42.765958015441896,
+      "input_start": 41.666,
+      "ready_at": 42.666,
+      "clip": 5
+    },
+    {
+      "id": 132,
+      "word": "doorknob",
+      "kind": "word",
+      "start": 42.765958015441896,
+      "end": 43.89965796661377,
+      "input_start": 42.766,
+      "ready_at": 43.766,
+      "clip": 5
+    },
+    {
+      "id": 133,
+      "word": "Blank",
+      "kind": "blank",
+      "start": 43.89965796661377,
+      "end": 45.099157966613774,
+      "input_start": 43.9,
+      "ready_at": 44.9,
+      "clip": 5
+    },
+    {
+      "id": 134,
+      "word": "backpack",
+      "kind": "word",
+      "start": 45.099157966613774,
+      "end": 46.566357917785666,
+      "input_start": 45.1,
+      "ready_at": 46.1,
+      "clip": 5
+    },
+    {
+      "id": 135,
+      "word": "Blank",
+      "kind": "blank",
+      "start": 46.566357917785666,
+      "end": 47.99965796661377,
+      "input_start": 46.568,
+      "ready_at": 47.568,
+      "clip": 5
+    },
+    {
+      "id": 136,
+      "word": "activate",
+      "kind": "word",
+      "start": 47.99965796661377,
+      "end": 49.39965796661377,
+      "input_start": 48.0,
+      "ready_at": 49.0,
+      "clip": 5
+    },
+    {
+      "id": 137,
+      "word": "Blank",
+      "kind": "blank",
+      "start": 49.39965796661377,
+      "end": 50,
+      "input_start": null,
+      "ready_at": null,
+      "clip": 5
+    },
+    {
+      "id": 171,
+      "word": "Blank",
+      "kind": "blank",
+      "start": 50,
+      "end": 50.16625806427001,
+      "input_start": null,
+      "ready_at": null,
+      "clip": 6
+    },
+    {
+      "id": 172,
+      "word": "placemat",
+      "kind": "word",
+      "start": 50.16625806427001,
+      "end": 51.399458015441866,
+      "input_start": 50.168,
+      "ready_at": 51.168,
+      "clip": 6
+    },
+    {
+      "id": 173,
+      "word": "Blank",
+      "kind": "blank",
+      "start": 51.399458015441894,
+      "end": 52.56625806426999,
+      "input_start": 51.4,
+      "ready_at": 52.4,
+      "clip": 6
+    },
+    {
+      "id": 174,
+      "word": "armchair",
+      "kind": "word",
+      "start": 52.566258064270016,
+      "end": 54.032857917785606,
+      "input_start": 52.568,
+      "ready_at": 53.568,
+      "clip": 6
+    },
+    {
+      "id": 175,
+      "word": "Blank",
+      "kind": "blank",
+      "start": 54.032857917785634,
+      "end": 55.43285791778564,
+      "input_start": 54.034,
+      "ready_at": 55.034,
+      "clip": 6
+    },
+    {
+      "id": 176,
+      "word": "sponge",
+      "kind": "word",
+      "start": 55.43285791778564,
+      "end": 56.59945801544191,
+      "input_start": 55.434,
+      "ready_at": 56.434,
+      "clip": 6
+    },
+    {
+      "id": 177,
+      "word": "Blank",
+      "kind": "blank",
+      "start": 56.59945801544188,
+      "end": 57.99945801544189,
+      "input_start": 56.6,
+      "ready_at": 57.6,
+      "clip": 6
+    },
+    {
+      "id": 178,
+      "word": "activate",
+      "kind": "word",
+      "start": 57.99945801544189,
+      "end": 59.29955786895752,
+      "input_start": 58.0,
+      "ready_at": 59.0,
+      "clip": 6
+    },
+    {
+      "id": 179,
+      "word": "Blank",
+      "kind": "blank",
+      "start": 59.29955786895752,
+      "end": 60,
+      "input_start": null,
+      "ready_at": null,
+      "clip": 6
+    }
+  ]
+}

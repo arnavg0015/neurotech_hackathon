@@ -2,6 +2,7 @@
 
 import errno
 import gzip
+import hashlib
 import json
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -22,7 +23,7 @@ STAGES = {
 
 
 class Replay:
-    def __init__(self, stage="activation"):
+    def __init__(self, stage="activation", curated=True):
         folder, model_file, trial, shape, clock_offset = STAGES[stage]
         results = ROOT / "results" / folder
         self.stage = stage
@@ -30,6 +31,9 @@ class Replay:
             artifact = cloudpickle.load(file)
         self.model = artifact["pipeline"]
         settings = artifact["preprocessing"]
+        if stage == "activation" and curated:
+            self.load_curated(artifact, results / model_file)
+            return
         report = json.loads((results / "metrics.json").read_text())
         manifest = pd.read_csv(results / "epoch_split.csv")
         source = next(row for row in report["sources"] if row["trial"] == trial)
@@ -95,19 +99,56 @@ class Replay:
         start_sample = max(0, int(np.ceil(origin_in_eeg * sfreq)))
         stop_sample = min(raw.n_times, int(np.ceil((origin_in_eeg + duration) * sfreq)))
         values = raw.get_data(start=start_sample, stop=stop_sample) * 1e6
+        self.set_session(values, start_sample / sfreq - origin_in_eeg, sfreq, raw.ch_names, duration, trial)
+
+    def load_curated(self, artifact, model_path):
+        folder = DEMO_DIR / "replay"
+        metadata = json.loads((folder / "activation.json").read_text())
+        with np.load(folder / "activation.npz", allow_pickle=False) as data:
+            values, samples, ids = data["signal_uv"], data["X"], data["event_id"]
+            channels, sfreq = data["channels"].tolist(), int(data["sfreq"])
+        if metadata["model_sha256"] != hashlib.sha256(model_path.read_bytes()).hexdigest():
+            raise ValueError("The activation model changed. Run python demo/prepare_replay.py again.")
+        if (channels != artifact["channels"] or channels != metadata["channels"] or sfreq != 500
+                or artifact["input_shape"] != [21, 500] or artifact["input_units"] != "microvolts"
+                or metadata["units"] != "microvolts" or metadata["preprocessing"] != artifact["preprocessing"]):
+            raise ValueError("Curated replay settings do not match the saved activation model.")
+        if (metadata["duration"] != 60 or values.shape != (21, 30000)
+                or samples.shape != (len(ids), 21, 500) or len(set(ids)) != len(ids)
+                or not np.isfinite(samples).all()):
+            raise ValueError("Invalid curated signal or epochs. Run python demo/prepare_replay.py again.")
+        self.events = {event["id"]: event for event in metadata["events"]}
+        if len(self.events) != len(metadata["events"]):
+            raise ValueError("Duplicate curated event IDs.")
+        eligible = {key for key, event in self.events.items() if event["ready_at"] is not None}
+        if set(ids) != eligible:
+            raise ValueError("Curated events and epochs do not match.")
+        for event in self.events.values():
+            clip = metadata["clips"][event["clip"] - 1]
+            if not (clip["start"] <= event["start"] < event["end"] <= clip["end"]):
+                raise ValueError("A curated event crosses a clip boundary.")
+            if event["ready_at"] is not None:
+                if (not event["start"] - 1e-6 <= event["input_start"] < event["ready_at"] <= event["end"] + 1e-6
+                        or not np.isclose(event["ready_at"] - event["input_start"], 1)):
+                    raise ValueError("A curated epoch crosses its event or clip boundary.")
+        self.inputs = {int(event_id): samples[i:i + 1] for i, event_id in enumerate(ids)}
+        self.set_session(values, 0, sfreq, channels, 60, 5, [clip["start"] for clip in metadata["clips"][1:]])
+
+    def set_session(self, values, start, sfreq, channels, duration, trial, joins=None):
         if not values.size or not np.isfinite(values).all():
             raise ValueError("The replay signal is missing or contains invalid samples.")
         bucket = round(0.02 * sfreq)
         boundaries = np.arange(0, values.shape[1], bucket)
         signal = {
-            "start": start_sample / sfreq - origin_in_eeg, "step": bucket / sfreq,
+            "start": start, "step": bucket / sfreq,
             "min": np.minimum.reduceat(values, boundaries, axis=1).round(3).tolist(),
             "max": np.maximum.reduceat(values, boundaries, axis=1).round(3).tolist(),
             "scales": np.maximum(10, np.ceil(1.5 * np.percentile(np.abs(values), 99, axis=1) / 10) * 10).tolist(),
         }
         session = {
-            "stage": stage, "trial": trial, "duration": duration, "sample_rate": sfreq,
-            "channels": raw.ch_names, "events": list(self.events.values()),
+            "stage": self.stage, "trial": trial, "duration": duration, "sample_rate": sfreq,
+            "channels": channels, "events": list(self.events.values()), "curated": joins is not None,
+            "joins": joins or [],
             "eligible_count": len(self.inputs), "signal": signal,
         }
         self.session = json.dumps(session, separators=(",", ":"), allow_nan=False).encode()
@@ -185,7 +226,7 @@ class Handler(BaseHTTPRequestHandler):
 
 if __name__ == "__main__":
     try:
-        print("Loading the activation and double-blink recordings and models...", flush=True)
+        print("Loading Evoke's curated replay and saved models...", flush=True)
         replays = {stage: Replay(stage) for stage in STAGES}
         with ThreadingHTTPServer(("127.0.0.1", 8000), Handler) as server:
             server.replays = replays
@@ -194,7 +235,7 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         print("\nReplay server stopped.")
     except FileNotFoundError as error:
-        raise SystemExit(f"Missing demo data: {error}\nSee demo/readme.md for the required saved outputs. The current blink training notebook builds a separate analysis model.")
+        raise SystemExit(f"Missing demo data: {error}\nSee demo/readme.md. To rebuild the curated replay, run python demo/prepare_replay.py.")
     except OSError as error:
         if error.errno == errno.EADDRINUSE:
             raise SystemExit(

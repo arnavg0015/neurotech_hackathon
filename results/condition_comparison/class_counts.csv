@@ -1,0 +1,9 @@
+Condition,Split,Epochs,Not activate,Activate
+Thought-only,Train,224,168,56
+Thought-only,Test,231,203,28
+"Spoken, less enunciation",Train,104,78,26
+"Spoken, less enunciation",Test,234,204,30
+"Spoken, more enunciation",Train,199,149,50
+"Spoken, more enunciation",Test,234,204,30
+"Spoken, all",Train,538,433,105
+"Spoken, all",Test,234,204,30

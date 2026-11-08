@@ -1,6 +1,6 @@
-# EEG Detection
+# Evoke
 
-This project uses EEG recordings to detect the spoken word “activate” and double blinks. The demo replays two recordings: activation starts a rotating arrow, and a double blink selects a bulb.
+This project uses EEG recordings to detect the spoken word “activate” and double blinks. In the demo, activation starts a rotating arrow and a double blink switches the selected appliance on or off.
 
 ## Setup
 
@@ -12,11 +12,11 @@ conda activate neurotech
 python demo/demo.py
 ```
 
-Open http://127.0.0.1:8000. The demo uses the saved models and recordings already in `results/`.
+Open http://127.0.0.1:8000. The demo uses saved models from `results/` and a curated one-minute activation replay in `demo/replay/`. Blink selection adds to the playback time.
 
 ## Folders
 
-- [demo](demo/readme.md): the EEG replay and bulb selector.
+- [demo](demo/readme.md): the EEG replay and appliance selector.
 - [stimulation](stimulation/readme.md): the screen shown during data collection.
 - [training](training/readme.md): activation and blink training notebooks.
 - [feature_importance](feature_importance/readme.md): channel importance and the activation channel-count comparison.

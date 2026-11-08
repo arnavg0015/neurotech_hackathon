@@ -1,0 +1,380 @@
+{
+  "target": "activate vs not activate (blank or other word)",
+  "test_status": "Exploratory; spoken Trial 5 was previously inspected",
+  "preprocessing": {
+    "clock_offset_s": 15.6,
+    "dropped_channels": [
+      "M1",
+      "M2",
+      "O2"
+    ],
+    "montage": "colin27_1005",
+    "notch_hz": [
+      60.0,
+      120.0,
+      180.0,
+      240.0,
+      300.0,
+      360.0,
+      420.0,
+      480.0
+    ],
+    "filter_method": "fir",
+    "filter_phase": "zero",
+    "bandpass_hz": [
+      0.5,
+      125
+    ],
+    "sample_rate_hz": 500,
+    "bad_channel_robust_z": 10,
+    "flat_sd_volts": 1e-07,
+    "interpolate_bads": true,
+    "reference": "average",
+    "ica_method": "fastica",
+    "ica_fit_highpass_hz": 1.0,
+    "ica_max_components": 20,
+    "ica_max_exclude": 3,
+    "ica_seed": 97,
+    "cleaning_fit": "independent unsupervised cleaning per full recording, including validation and test",
+    "epoch_seconds": 1.0,
+    "baseline_seconds": [
+      -0.2,
+      0
+    ],
+    "baseline_endpoint": "excludes onset",
+    "epoch_policy": "one full post-onset epoch per event; ceil to next sample",
+    "incomplete_event_policy": "include if a full epoch fits the actual recorded interval"
+  },
+  "channels": [
+    "Fp1",
+    "Fp2",
+    "F9",
+    "F7",
+    "F3",
+    "Fz",
+    "F4",
+    "F8",
+    "F10",
+    "T7",
+    "C3",
+    "C4",
+    "T8",
+    "Cz",
+    "p7",
+    "p3",
+    "pz",
+    "p4",
+    "p8",
+    "oz",
+    "o1"
+  ],
+  "input_units": "microvolts",
+  "input_shape": [
+    21,
+    500
+  ],
+  "feature_bands_hz": [
+    [
+      1,
+      4
+    ],
+    [
+      4,
+      8
+    ],
+    [
+      8,
+      13
+    ],
+    [
+      13,
+      30
+    ],
+    [
+      30,
+      45
+    ]
+  ],
+  "features_per_channel": 5,
+  "feature_count": 105,
+  "sources": [
+    {
+      "experiment": 1,
+      "trial": 1,
+      "eeg_file": "data/EEG Data/Experiment 1 - Mental/Trial 1/subject1.cnt",
+      "stimulus_file": "data/Stimulation Data/Experiment 1/Trial 1/subject1_all.csv",
+      "segment_file": null,
+      "original_start_utc": "2026-11-07T19:46:02.783507+00:00",
+      "original_samples": 319482,
+      "segment_start_utc": "2026-11-07T19:46:02.783507+00:00",
+      "corrected_start_utc": "2026-11-07T19:46:18.383507+00:00",
+      "retained_start_sample": 0,
+      "retained_samples": 319482,
+      "original_sample_rate_hz": 1000.0,
+      "start_relative_to_stimulus_s": -12.883993,
+      "end_relative_to_stimulus_s": 306.59800700000005
+    },
+    {
+      "experiment": 1,
+      "trial": 2,
+      "eeg_file": "data/EEG Data/Experiment 1 - Mental/Trial 2/subject1.cnt",
+      "stimulus_file": "data/Stimulation Data/Experiment 1/Trial 2/subject1_all.csv",
+      "segment_file": "data/EEG Data/Experiment 1 - Mental/Trial 2/subject1.seg",
+      "original_start_utc": "2026-11-07T19:55:41.975422+00:00",
+      "original_samples": 494416,
+      "segment_start_utc": "2026-11-07T19:59:25.630680+00:00",
+      "corrected_start_utc": "2026-11-07T19:59:41.230680+00:00",
+      "retained_start_sample": 187024,
+      "retained_samples": 307392,
+      "original_sample_rate_hz": 1000.0,
+      "start_relative_to_stimulus_s": -1.4847199020000001,
+      "end_relative_to_stimulus_s": 305.907280098
+    },
+    {
+      "experiment": 1,
+      "trial": 3,
+      "eeg_file": "data/EEG Data/Experiment 1 - Mental/Trial 3/subject1.cnt",
+      "stimulus_file": "data/Stimulation Data/Experiment 1/Trial 3/subject1_all.csv",
+      "segment_file": null,
+      "original_start_utc": "2026-11-07T23:32:53.873940+00:00",
+      "original_samples": 305736,
+      "segment_start_utc": "2026-11-07T23:32:53.873940+00:00",
+      "corrected_start_utc": "2026-11-07T23:33:09.473940+00:00",
+      "retained_start_sample": 0,
+      "retained_samples": 305736,
+      "original_sample_rate_hz": 1000.0,
+      "start_relative_to_stimulus_s": -2.132860049,
+      "end_relative_to_stimulus_s": 303.603139951
+    },
+    {
+      "trial": 1,
+      "eeg_file": "data/EEG Data/Experiment 2 - Spoken/Trial 1/subject1.cnt",
+      "stimulus_file": "data/Stimulation Data/Experiment 2/Trial 1/subject1_all.csv",
+      "experiment": 2
+    },
+    {
+      "trial": 2,
+      "eeg_file": "data/EEG Data/Experiment 2 - Spoken/Trial 2/subject1.cnt",
+      "stimulus_file": "data/Stimulation Data/Experiment 2/Trial 2/subject1_all.csv",
+      "experiment": 2
+    },
+    {
+      "trial": 3,
+      "eeg_file": "data/EEG Data/Experiment 2 - Spoken/Trial 3/subject1.cnt",
+      "stimulus_file": "data/Stimulation Data/Experiment 2/Trial 3/subject1_all.csv",
+      "experiment": 2
+    },
+    {
+      "trial": 4,
+      "eeg_file": "data/EEG Data/Experiment 2 - Spoken/Trial 4/subject1.cnt",
+      "stimulus_file": "data/Stimulation Data/Experiment 2/Trial 4/subject1_all.csv",
+      "experiment": 2
+    },
+    {
+      "trial": 5,
+      "eeg_file": "data/EEG Data/Experiment 2 - Spoken/Trial 5/subject1.cnt",
+      "stimulus_file": "data/Stimulation Data/Experiment 2/Trial 5/subject1_all.csv",
+      "experiment": 2
+    }
+  ],
+  "mental_quality_checks": [
+    {
+      "experiment": 1,
+      "trial": 1,
+      "interpolated_channels": [],
+      "ica_components": 19,
+      "blink_components_removed": [
+        0
+      ],
+      "ica_iterations": 49,
+      "ica_converged": true
+    },
+    {
+      "experiment": 1,
+      "trial": 2,
+      "interpolated_channels": [],
+      "ica_components": 19,
+      "blink_components_removed": [
+        0
+      ],
+      "ica_iterations": 30,
+      "ica_converged": true
+    },
+    {
+      "experiment": 1,
+      "trial": 3,
+      "interpolated_channels": [
+        "Fz"
+      ],
+      "ica_components": 18,
+      "blink_components_removed": [
+        0
+      ],
+      "ica_iterations": 27,
+      "ica_converged": true
+    }
+  ],
+  "model_files": {
+    "thought_only_random_forest": "results/condition_comparison/thought_only_random_forest.pkl",
+    "thought_only_svm": "results/condition_comparison/thought_only_svm.pkl",
+    "thought_only_logistic_regression": "results/condition_comparison/thought_only_logistic_regression.pkl",
+    "thought_only_lda": "results/condition_comparison/thought_only_lda.pkl",
+    "spoken_less_random_forest": "results/condition_comparison/spoken_less_random_forest.pkl",
+    "spoken_less_svm": "results/condition_comparison/spoken_less_svm.pkl",
+    "spoken_less_logistic_regression": "results/condition_comparison/spoken_less_logistic_regression.pkl",
+    "spoken_less_lda": "results/condition_comparison/spoken_less_lda.pkl",
+    "spoken_more_random_forest": "results/condition_comparison/spoken_more_random_forest.pkl",
+    "spoken_more_svm": "results/condition_comparison/spoken_more_svm.pkl",
+    "spoken_more_logistic_regression": "results/condition_comparison/spoken_more_logistic_regression.pkl",
+    "spoken_more_lda": "results/condition_comparison/spoken_more_lda.pkl",
+    "spoken_all_random_forest": "results/condition_comparison/spoken_all_random_forest.pkl",
+    "spoken_all_svm": "results/condition_comparison/spoken_all_svm.pkl",
+    "spoken_all_logistic_regression": "results/condition_comparison/spoken_all_logistic_regression.pkl",
+    "spoken_all_lda": "results/condition_comparison/spoken_all_lda.pkl"
+  },
+  "source_sha256": {
+    "data/EEG Data/Experiment 1 - Mental/Trial 1/subject1.cnt": "509bd4c09940780aec8439cec042b3961df7b331119a7f0717c7484da2bd103d",
+    "data/EEG Data/Experiment 1 - Mental/Trial 2/subject1.cnt": "fb81b600d0ce1d3a13766dc373823351db3f3d8bdc7849790e99c3113db78291",
+    "data/EEG Data/Experiment 1 - Mental/Trial 2/subject1.seg": "bb24db3076c61fbbdeadd47c54d0ecca16a7eff28ce263e9b6f6407408cfb068",
+    "data/EEG Data/Experiment 1 - Mental/Trial 3/subject1.cnt": "a4d57bf011120b4e8fe518d768b93eb1f34dd4f7a89f9a460486bf0d778e7ce7",
+    "data/EEG Data/Experiment 2 - Spoken/Trial 1/subject1.cnt": "bbc50b6adda5803643343e4c997573b62860a2a70be26ad48f38364b36492cdb",
+    "data/EEG Data/Experiment 2 - Spoken/Trial 2/subject1.cnt": "767db3e52442e86bfb97f093b45cf06f808a695f4542133898a0c5636093ce8f",
+    "data/EEG Data/Experiment 2 - Spoken/Trial 3/subject1.cnt": "f8a781a50fcec1e48a6baf42cf72da2180a5d902b92706eaf8d2ce4e14ad5d02",
+    "data/EEG Data/Experiment 2 - Spoken/Trial 4/subject1.cnt": "0168b65daf53f95136466c58b0f996409a51c8c156fc43a26ddc0693bf19379a",
+    "data/EEG Data/Experiment 2 - Spoken/Trial 5/subject1.cnt": "0d5d788d9406e75f4d4a1e7b7ba53596fc7940d5d59df42e072159c1116133b8",
+    "data/Stimulation Data/Experiment 1/Trial 1/subject1_all.csv": "cffa2808048e3c01eef6d42c6a2b42c72a56ebbd21d572c78b514db37a5c7a50",
+    "data/Stimulation Data/Experiment 1/Trial 2/subject1_all.csv": "7174ec6d39276a3a38795a8e5b011c64244b744a3e5b6e363fcd46660cec00e3",
+    "data/Stimulation Data/Experiment 1/Trial 3/subject1_all.csv": "5c5ce8d167a532fe9b32f87c2c85c322cbc0b7679542956c2595e66dfce7cb60",
+    "data/Stimulation Data/Experiment 2/Trial 1/subject1_all.csv": "e9647e276b8ea5cbd74e4cd5b0ab855ba0e67327fdae352611aa111841c3e8c0",
+    "data/Stimulation Data/Experiment 2/Trial 2/subject1_all.csv": "0fc1344851bcfa8187ee4b88c3ed734e4d61fc10e5f0c76a0220d540262a6ca8",
+    "data/Stimulation Data/Experiment 2/Trial 3/subject1_all.csv": "afa238c7391918925587859318b81194341bbb6f8d95ab0a1d53c526b8da9e5a",
+    "data/Stimulation Data/Experiment 2/Trial 4/subject1_all.csv": "58c1f2c6de91edf4a5b0252bf75a7d834c22c162266c8fe140daad7c4015fa8f",
+    "data/Stimulation Data/Experiment 2/Trial 5/subject1_all.csv": "ca3b049b5982671edba8c5c0282769796266a1e53a30f708abff8e781b46d4df",
+    "results/hackathon_pipeline/epoch_split.csv": "b81380226f8b59fe8bd86f5bc8439b3c2524033aede6b1fc3187ee084b8530c1",
+    "results/hackathon_pipeline/epochs.npz": "aec7260f4ec68ce4e4e19b839503b7fd04bbd0f74ca77a8706057c50566db0b8",
+    "results/hackathon_pipeline/metrics.json": "4476fdae7bc25d9450c60024a40ab03da3a8fe548c7073ba71bda8594afd6d32",
+    "results/hackathon_pipeline/test_predictions.csv": "dd40c0a66b7a5b5feb2bea217c986594d9d55d47f36c8e7c707bf933de52467c"
+  },
+  "model_settings": {
+    "Random forest": {
+      "bootstrap": true,
+      "ccp_alpha": 0.0,
+      "class_weight": "balanced",
+      "criterion": "gini",
+      "max_depth": null,
+      "max_features": "sqrt",
+      "max_leaf_nodes": null,
+      "max_samples": null,
+      "min_impurity_decrease": 0.0,
+      "min_samples_leaf": 1,
+      "min_samples_split": 2,
+      "min_weight_fraction_leaf": 0.0,
+      "monotonic_cst": null,
+      "n_estimators": 300,
+      "n_jobs": null,
+      "oob_score": false,
+      "random_state": 42,
+      "verbose": 0,
+      "warm_start": false
+    },
+    "SVM": {
+      "C": 1,
+      "break_ties": false,
+      "cache_size": 200,
+      "class_weight": "balanced",
+      "coef0": 0.0,
+      "decision_function_shape": "ovr",
+      "degree": 3,
+      "gamma": "scale",
+      "kernel": "rbf",
+      "max_iter": -1,
+      "probability": "deprecated",
+      "random_state": null,
+      "shrinking": true,
+      "tol": 0.001,
+      "verbose": false
+    },
+    "Logistic regression": {
+      "C": 1,
+      "class_weight": "balanced",
+      "dual": false,
+      "fit_intercept": true,
+      "intercept_scaling": 1,
+      "l1_ratio": 0.0,
+      "max_iter": 5000,
+      "n_jobs": null,
+      "penalty": "deprecated",
+      "random_state": null,
+      "solver": "lbfgs",
+      "tol": 0.0001,
+      "verbose": 0,
+      "warm_start": false
+    },
+    "LDA": {
+      "covariance_estimator": null,
+      "n_components": null,
+      "priors": null,
+      "shrinkage": "auto",
+      "solver": "lsqr",
+      "store_covariance": false,
+      "tol": 0.0001
+    }
+  },
+  "splits": {
+    "Thought-only": {
+      "experiment": 1,
+      "train_trials": [
+        1,
+        2
+      ],
+      "test_trial": 3
+    },
+    "Spoken, less enunciation": {
+      "experiment": 2,
+      "train_trials": [
+        1
+      ],
+      "test_trial": 5
+    },
+    "Spoken, more enunciation": {
+      "experiment": 2,
+      "train_trials": [
+        2,
+        3
+      ],
+      "test_trial": 5
+    },
+    "Spoken, all": {
+      "experiment": 2,
+      "train_trials": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "test_trial": 5
+    }
+  },
+  "software": {
+    "mne": "1.13.2",
+    "antio": "0.7.1",
+    "numpy": "2.4.6",
+    "scipy": "1.17.1",
+    "scikit-learn": "1.9.1",
+    "cloudpickle": "3.1.2"
+  },
+  "checks": {
+    "finite_inputs": true,
+    "disjoint_recordings": true,
+    "same_spoken_test_epochs": 234,
+    "saved_rf_reproduced": true,
+    "exported_models_verified": 16
+  },
+  "notes": [
+    "Fixed model settings; no validation search or test-based tuning.",
+    "Mental preprocessing follows the saved spoken pipeline independently per full retained recording.",
+    "The +15.6-second correction remains approximate.",
+    "Thought-only uses a separate test recording; training sizes and recording protocols differ.",
+    "This comparison does not isolate a causal effect of enunciation."
+  ]
+}
