@@ -1,0 +1,278 @@
+{
+  "source_code": "neurotech_hackathon-main",
+  "experiment": 2,
+  "condition": "spoken",
+  "train_trials": [
+    1,
+    2,
+    3
+  ],
+  "validation_trial": 4,
+  "test_trial": 5,
+  "refit_trials": [
+    1,
+    2,
+    3,
+    4
+  ],
+  "selected_model": "Bandpower + RF",
+  "test_status": "previously evaluated trial; excluded from model selection in this run",
+  "validation_balanced_accuracy": 0.9116170070304653,
+  "train_epochs": 303,
+  "validation_epochs": 235,
+  "test_epochs": 234,
+  "preprocessing": {
+    "clock_offset_s": 15.6,
+    "dropped_channels": [
+      "M1",
+      "M2",
+      "O2"
+    ],
+    "montage": "colin27_1005",
+    "notch_hz": [
+      60.0,
+      120.0,
+      180.0,
+      240.0,
+      300.0,
+      360.0,
+      420.0,
+      480.0
+    ],
+    "filter_method": "fir",
+    "filter_phase": "zero",
+    "bandpass_hz": [
+      0.5,
+      125
+    ],
+    "sample_rate_hz": 500,
+    "bad_channel_robust_z": 10,
+    "flat_sd_volts": 1e-07,
+    "interpolate_bads": true,
+    "reference": "average",
+    "ica_method": "fastica",
+    "ica_fit_highpass_hz": 1.0,
+    "ica_max_components": 20,
+    "ica_max_exclude": 3,
+    "ica_seed": 97,
+    "cleaning_fit": "independent unsupervised cleaning per full recording, including validation and test",
+    "epoch_seconds": 1.0,
+    "baseline_seconds": [
+      -0.2,
+      0
+    ],
+    "baseline_endpoint": "excludes onset",
+    "epoch_policy": "one full post-onset epoch per event; ceil to next sample",
+    "incomplete_event_policy": "include if a full epoch fits the actual recorded interval"
+  },
+  "channels": [
+    "Fp1",
+    "Fp2",
+    "F9",
+    "F7",
+    "F3",
+    "Fz",
+    "F4",
+    "F8",
+    "F10",
+    "T7",
+    "C3",
+    "C4",
+    "T8",
+    "Cz",
+    "p7",
+    "p3",
+    "pz",
+    "p4",
+    "p8",
+    "oz",
+    "o1"
+  ],
+  "feature_bands_hz": [
+    [
+      1,
+      4
+    ],
+    [
+      4,
+      8
+    ],
+    [
+      8,
+      13
+    ],
+    [
+      13,
+      30
+    ],
+    [
+      30,
+      45
+    ]
+  ],
+  "time_bin_seconds": 0.05,
+  "input_units": "microvolts",
+  "input_shape": [
+    21,
+    500
+  ],
+  "candidate_models": [
+    "CSP + LDA",
+    "Time bins + LDA",
+    "Bandpower + LR",
+    "Bandpower + SVM",
+    "Bandpower + RF",
+    "Always not activate"
+  ],
+  "selected_pipeline": "Pipeline(steps=[('functiontransformer',\n                 FunctionTransformer(func=<function bandpower at 0x124408ae0>,\n                                     kw_args={'bands': [(1, 4), (4, 8), (8, 13),\n                                                        (13, 30), (30, 45)],\n                                              'sfreq': 500})),\n                ('randomforestclassifier',\n                 RandomForestClassifier(class_weight='balanced',\n                                        n_estimators=300, random_state=42))])",
+  "test_metrics": {
+    "Accuracy": 0.9700854700854701,
+    "Balanced accuracy": 0.9544117647058823,
+    "Activate precision": 0.8484848484848485,
+    "Activate recall": 0.9333333333333333,
+    "Activate F1": 0.8888888888888888,
+    "ROC AUC": 0.9823529411764705,
+    "Average precision": 0.8953119274907175
+  },
+  "always_not_activate": {
+    "Accuracy": 0.8717948717948718,
+    "Balanced accuracy": 0.5,
+    "Activate precision": 0.0,
+    "Activate recall": 0.0,
+    "Activate F1": 0.0,
+    "ROC AUC": 0.5,
+    "Average precision": 0.1282051282051282
+  },
+  "confusion_matrix": [
+    [
+      199,
+      5
+    ],
+    [
+      2,
+      28
+    ]
+  ],
+  "false_activations": [
+    {
+      "stimulus_type": "blank",
+      "epochs": 114,
+      "false_activations": 0,
+      "false_activation_rate": 0.0
+    },
+    {
+      "stimulus_type": "other word",
+      "epochs": 90,
+      "false_activations": 5,
+      "false_activation_rate": 0.05555555555555555
+    }
+  ],
+  "quality_checks": [
+    {
+      "trial": 1,
+      "channels": 21,
+      "sample_rate_hz": 500.0,
+      "interpolated_channels": [],
+      "ica_components": 19,
+      "blink_components_removed": [
+        1,
+        2
+      ],
+      "ica_iterations": 25,
+      "ica_converged": true
+    },
+    {
+      "trial": 2,
+      "channels": 21,
+      "sample_rate_hz": 500.0,
+      "interpolated_channels": [],
+      "ica_components": 19,
+      "blink_components_removed": [
+        0,
+        8
+      ],
+      "ica_iterations": 48,
+      "ica_converged": true
+    },
+    {
+      "trial": 3,
+      "channels": 21,
+      "sample_rate_hz": 500.0,
+      "interpolated_channels": [],
+      "ica_components": 19,
+      "blink_components_removed": [
+        0,
+        1
+      ],
+      "ica_iterations": 83,
+      "ica_converged": true
+    },
+    {
+      "trial": 4,
+      "channels": 21,
+      "sample_rate_hz": 500.0,
+      "interpolated_channels": [
+        "Fp2",
+        "Fz"
+      ],
+      "ica_components": 18,
+      "blink_components_removed": [
+        0,
+        1
+      ],
+      "ica_iterations": 34,
+      "ica_converged": true
+    },
+    {
+      "trial": 5,
+      "channels": 21,
+      "sample_rate_hz": 500.0,
+      "interpolated_channels": [
+        "Fp2",
+        "Fz"
+      ],
+      "ica_components": 18,
+      "blink_components_removed": [
+        0,
+        1
+      ],
+      "ica_iterations": 34,
+      "ica_converged": true
+    }
+  ],
+  "sources": [
+    {
+      "trial": 1,
+      "eeg_file": "data/EEG Data/Experiment 2 - Spoken/Trial 1/subject1.cnt",
+      "stimulus_file": "data/Stimulation Data/Experiment 2/Trial 1/subject1_all.csv"
+    },
+    {
+      "trial": 2,
+      "eeg_file": "data/EEG Data/Experiment 2 - Spoken/Trial 2/subject1.cnt",
+      "stimulus_file": "data/Stimulation Data/Experiment 2/Trial 2/subject1_all.csv"
+    },
+    {
+      "trial": 3,
+      "eeg_file": "data/EEG Data/Experiment 2 - Spoken/Trial 3/subject1.cnt",
+      "stimulus_file": "data/Stimulation Data/Experiment 2/Trial 3/subject1_all.csv"
+    },
+    {
+      "trial": 4,
+      "eeg_file": "data/EEG Data/Experiment 2 - Spoken/Trial 4/subject1.cnt",
+      "stimulus_file": "data/Stimulation Data/Experiment 2/Trial 4/subject1_all.csv"
+    },
+    {
+      "trial": 5,
+      "eeg_file": "data/EEG Data/Experiment 2 - Spoken/Trial 5/subject1.cnt",
+      "stimulus_file": "data/Stimulation Data/Experiment 2/Trial 5/subject1_all.csv"
+    }
+  ],
+  "notes": [
+    "The +15.6 s correction is fixed and approximate; speech timing does not establish an exact clock offset.",
+    "Epochs shortened from 2 s to 1 s to stay inside the labeled event.",
+    "ICA uses frontal EEG channels as blink proxies.",
+    "Spoken muscle activity may contribute; this does not establish thought-only detection.",
+    "Baseline subtraction uses preceding activity; this is offline onset-aligned classification.",
+    "Trial-wise splitting replaces shuffled folds; no binomial significance claim for balanced accuracy."
+  ]
+}

@@ -1,0 +1,161 @@
+{
+  "experiment": 3,
+  "train_trials": [
+    1
+  ],
+  "validation_trial": 2,
+  "test_trial": 3,
+  "refit_trials": [
+    1,
+    2
+  ],
+  "selected_model": "Logistic regression",
+  "selected_pipeline": "Pipeline(steps=[('functiontransformer',\n                 FunctionTransformer(func=<function time_bins at 0x125553a60>,\n                                     kw_args={'bin_seconds': 0.05,\n                                              'sfreq': 100})),\n                ('standardscaler', StandardScaler()),\n                ('logisticregression',\n                 LogisticRegression(class_weight='balanced', max_iter=5000))])",
+  "validation_balanced_accuracy": 0.9393939393939394,
+  "train_epochs": 59,
+  "validation_epochs": 89,
+  "test_epochs": 89,
+  "channels": [
+    "Fp1",
+    "Fp2"
+  ],
+  "display_channels": [
+    "Fp1",
+    "Fp2",
+    "F9",
+    "F7",
+    "F3",
+    "Fz",
+    "F4",
+    "F8",
+    "F10",
+    "T7",
+    "C3",
+    "C4",
+    "T8",
+    "Cz",
+    "p7",
+    "p3",
+    "pz",
+    "p4",
+    "p8",
+    "oz",
+    "o1"
+  ],
+  "input_shape": [
+    2,
+    100
+  ],
+  "input_units": "microvolts",
+  "time_bin_seconds": 0.05,
+  "preprocessing": {
+    "clock_offset_s": 0.0,
+    "clock_alignment": "approximate visual alignment on Trials 1\u20132",
+    "dropped_channels": [
+      "M1",
+      "M2",
+      "O2"
+    ],
+    "bandpass_hz": [
+      0.5,
+      10
+    ],
+    "filter_method": "iir",
+    "filter_type": "butterworth",
+    "filter_order": 4,
+    "filter_phase": "zero",
+    "sample_rate_hz": 100,
+    "reference": "original",
+    "ica": false,
+    "interpolate_bads": false,
+    "epoch_seconds": 1.0,
+    "baseline_seconds": [
+      -0.2,
+      0
+    ],
+    "baseline_endpoint": "excludes onset",
+    "epoch_policy": "one full post-onset epoch per event; ceil to next sample"
+  },
+  "sources": [
+    {
+      "trial": 1,
+      "eeg_file": "data/EEG Data/Experiment 3 - Double Blinking/Trial 1/subject1.cnt",
+      "stimulus_file": "data/Stimulation Data/Experiment 3 - Double Blinking/Trial 1/subject1_all.csv",
+      "original_start_utc": "2026-11-08T01:58:33.018084+00:00",
+      "segment_start_utc": "2026-11-08T02:02:22.985121+00:00",
+      "retained_start_sample": 22710,
+      "retained_samples": 126887,
+      "original_sample_rate_hz": 1000.0,
+      "segment_file": "data/EEG Data/Experiment 3 - Double Blinking/Trial 1/subject1.seg"
+    },
+    {
+      "trial": 2,
+      "eeg_file": "data/EEG Data/Experiment 3 - Double Blinking/Trial 2/subject1.cnt",
+      "stimulus_file": "data/Stimulation Data/Experiment 3 - Double Blinking/Trial 2/subject1_all.csv",
+      "original_start_utc": "2026-11-08T02:06:32.922243+00:00",
+      "segment_start_utc": "2026-11-08T02:06:32.922243+00:00",
+      "retained_start_sample": 0,
+      "retained_samples": 188322,
+      "original_sample_rate_hz": 1000.0,
+      "segment_file": null
+    },
+    {
+      "trial": 3,
+      "eeg_file": "data/EEG Data/Experiment 3 - Double Blinking/Trial 3/subject1.cnt",
+      "stimulus_file": "data/Stimulation Data/Experiment 3 - Double Blinking/Trial 3/subject1_all.csv",
+      "original_start_utc": "2026-11-08T02:11:34.971136+00:00",
+      "segment_start_utc": "2026-11-08T02:11:34.971136+00:00",
+      "retained_start_sample": 0,
+      "retained_samples": 184367,
+      "original_sample_rate_hz": 1000.0,
+      "segment_file": null
+    }
+  ],
+  "test_metrics": {
+    "Accuracy": 1.0,
+    "Balanced accuracy": 1.0,
+    "Double-blink precision": 1.0,
+    "Double-blink recall": 1.0,
+    "Double-blink F1": 1.0,
+    "ROC AUC": 1.0,
+    "Average precision": 1.0
+  },
+  "always_negative": {
+    "Accuracy": 0.6292134831460674,
+    "Balanced accuracy": 0.5,
+    "Double-blink precision": 0.0,
+    "Double-blink recall": 0.0,
+    "Double-blink F1": 0.0,
+    "ROC AUC": 0.5,
+    "Average precision": 0.3707865168539326
+  },
+  "confusion_matrix": [
+    [
+      56,
+      0
+    ],
+    [
+      0,
+      33
+    ]
+  ],
+  "false_positives": [
+    {
+      "stimulus_type": "blank",
+      "epochs": 45,
+      "false_positives": 0,
+      "false_positive_rate": 0.0
+    },
+    {
+      "stimulus_type": "na",
+      "epochs": 11,
+      "false_positives": 0,
+      "false_positive_rate": 0.0
+    }
+  ],
+  "notes": [
+    "Cue labels describe instructed actions, not independently measured blink times.",
+    "Trial 3 did not determine clock correction or model settings.",
+    "Filtering is offline; the demo switches between separate prerecorded sessions."
+  ]
+}

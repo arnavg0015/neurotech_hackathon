@@ -1,0 +1,4 @@
+trial,eeg_file,stimulus_file,original_start_utc,segment_start_utc,retained_start_sample,retained_samples,original_sample_rate_hz,segment_file
+1,data/EEG Data/Experiment 3 - Double Blinking/Trial 1/subject1.cnt,data/Stimulation Data/Experiment 3 - Double Blinking/Trial 1/subject1_all.csv,2026-11-08T01:58:33.018084+00:00,2026-11-08T02:02:22.985121+00:00,22710,126887,1000.0,data/EEG Data/Experiment 3 - Double Blinking/Trial 1/subject1.seg
+2,data/EEG Data/Experiment 3 - Double Blinking/Trial 2/subject1.cnt,data/Stimulation Data/Experiment 3 - Double Blinking/Trial 2/subject1_all.csv,2026-11-08T02:06:32.922243+00:00,2026-11-08T02:06:32.922243+00:00,0,188322,1000.0,
+3,data/EEG Data/Experiment 3 - Double Blinking/Trial 3/subject1.cnt,data/Stimulation Data/Experiment 3 - Double Blinking/Trial 3/subject1_all.csv,2026-11-08T02:11:34.971136+00:00,2026-11-08T02:11:34.971136+00:00,0,184367,1000.0,

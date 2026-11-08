@@ -1,0 +1,663 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Word Stimulation</title>
+<style>
+  :root {
+    --bg: #f4f4f4;          /* stimulus background (kept constant) */
+    --ink: #111;
+    --muted: #6b6b6b;
+    --line: #d9d9d9;
+    --panel: #fff;
+    --go: #1f9d55;
+    --go-dark: #17804a;
+    --stop: #d62828;
+    --stop-dark: #b01f1f;
+    --trigger: #b4235a;
+  }
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  html, body { margin: 0; height: 100%; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font: 15px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  }
+  .screen { min-height: 100%; padding: 40px 16px; }
+  .card {
+    max-width: 720px; margin: 0 auto; background: var(--panel);
+    border: 1px solid var(--line); border-radius: 12px; padding: 28px;
+  }
+  h1 { font-size: 22px; margin: 0 0 4px; }
+  h2 { font-size: 16px; margin: 28px 0 10px; }
+  .sub { color: var(--muted); margin: 0 0 24px; }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; }
+  label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; }
+  label small { font-weight: 400; color: var(--muted); }
+  input[type=text], input[type=number], textarea {
+    width: 100%; font: inherit; padding: 8px 10px; border: 1px solid var(--line);
+    border-radius: 8px; background: #fff; color: var(--ink);
+  }
+  textarea { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 13px; resize: vertical; min-height: 84px; }
+  input:focus, textarea:focus { outline: 2px solid #9cc3ff; outline-offset: 0; border-color: #6aa1f5; }
+  .words-head { display: flex; justify-content: space-between; align-items: end; gap: 8px; margin-top: 18px; }
+  .words-head label { margin: 0; }
+  .check { display: flex; gap: 8px; align-items: center; margin-top: 16px; font-size: 14px; }
+  .check input { margin: 0; }
+
+  .plan {
+    margin-top: 20px; padding: 12px 14px; border-radius: 8px; background: #f6f7f9;
+    border: 1px solid var(--line); font-size: 14px;
+  }
+  .plan b { font-variant-numeric: tabular-nums; }
+  .error { color: var(--stop); margin-top: 10px; font-size: 14px; }
+
+  .btn {
+    font: inherit; font-size: 14px; border: 1px solid var(--line); background: #fff; color: var(--ink);
+    border-radius: 8px; padding: 7px 12px; cursor: pointer;
+  }
+  .btn:hover { background: #f2f2f2; }
+  .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; align-items: center; }
+
+  .play {
+    display: inline-flex; align-items: center; gap: 10px; font: inherit; font-size: 16px; font-weight: 600;
+    color: #fff; background: var(--go); border: 0; border-radius: 999px; padding: 12px 24px 12px 18px; cursor: pointer;
+  }
+  .play:hover { background: var(--go-dark); }
+  .play:disabled { background: #9bbfab; cursor: not-allowed; }
+  .play svg { width: 18px; height: 18px; }
+  .hint { color: var(--muted); font-size: 13px; }
+
+  /* ---------- Stimulation stage ---------- */
+  #stage {
+    position: fixed; inset: 0; background: var(--bg);
+    display: flex; align-items: center; justify-content: center;
+  }
+  #dot { width: 18px; height: 18px; border-radius: 50%; background: #000; }
+  #word {
+    font: 600 clamp(40px, 9vw, 96px)/1 ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    color: #000; letter-spacing: 0.02em; user-select: none;
+  }
+  #controls {
+    position: fixed; right: 20px; bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+    display: flex; align-items: center; gap: 12px;
+  }
+  #clock { color: #9a9a9a; font-size: 13px; font-variant-numeric: tabular-nums; }
+  .stop {
+    width: 56px; height: 56px; border-radius: 50%; border: 0; background: var(--stop);
+    display: grid; place-items: center; cursor: pointer;
+  }
+  .stop:hover { background: var(--stop-dark); }
+  .stop span { width: 18px; height: 18px; background: #fff; border-radius: 3px; }
+
+  /* ---------- Results ---------- */
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; }
+  .stat { border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; }
+  .stat div:first-child { color: var(--muted); font-size: 12px; }
+  .stat div:last-child { font-size: 18px; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; max-height: 420px; }
+  table { border-collapse: collapse; width: 100%; font-size: 13px; font-variant-numeric: tabular-nums; }
+  th, td { text-align: left; padding: 7px 10px; border-bottom: 1px solid #eee; white-space: nowrap; }
+  th { position: sticky; top: 0; background: #fafafa; font-weight: 600; }
+  td.num, th.num { text-align: right; }
+  .tag { color: var(--trigger); font-weight: 600; }
+  .warn { color: #a15c00; }
+</style>
+</head>
+<body>
+
+<!-- ================= SETUP ================= -->
+<section id="setup" class="screen">
+  <div class="card">
+    <h1>Word Stimulation</h1>
+    <p class="sub">Baseline dot → word → baseline dot … for a fixed-length session. Onsets and durations of every word are logged.</p>
+
+    <div class="grid">
+      <div>
+        <label for="cfgTrigger">Trigger word</label>
+        <input id="cfgTrigger" type="text" value="activate" autocomplete="off" spellcheck="false">
+      </div>
+      <div>
+        <label for="cfgCount">Number of other words</label>
+        <input id="cfgCount" type="number" min="1" max="50" step="1" value="10">
+      </div>
+      <div>
+        <label for="cfgShare">Trigger share <small>(% of words)</small></label>
+        <input id="cfgShare" type="number" min="1" max="99" step="1" value="50">
+      </div>
+      <div>
+        <label for="cfgWordMin">Word duration minimum <small>(seconds)</small></label>
+        <input id="cfgWordMin" type="number" min="0.1" step="0.1" value="3">
+      </div>
+      <div>
+        <label for="cfgWordMax">Word duration maximum <small>(seconds)</small></label>
+        <input id="cfgWordMax" type="number" min="0.1" step="0.1" value="5">
+      </div>
+      <div>
+        <label for="cfgBaseMin">Baseline minimum <small>(seconds)</small></label>
+        <input id="cfgBaseMin" type="number" min="0" step="0.5" value="6">
+      </div>
+      <div>
+        <label for="cfgBaseMax">Baseline maximum <small>(seconds)</small></label>
+        <input id="cfgBaseMax" type="number" min="0" step="0.5" value="14">
+      </div>
+      <div>
+        <label for="cfgSession">Session length <small>(minutes)</small></label>
+        <input id="cfgSession" type="number" min="0.5" step="0.5" value="10">
+      </div>
+    </div>
+
+    <div class="words-head">
+      <label for="cfgWords">Other words <small>(distinct, matched in length to the trigger word)</small></label>
+      <button class="btn" id="shuffleBtn" type="button">New random words</button>
+    </div>
+    <textarea id="cfgWords" spellcheck="false" style="margin-top:6px"></textarea>
+
+    <label class="check"><input id="cfgFullscreen" type="checkbox" checked> Go fullscreen during the session</label>
+
+    <div class="plan" id="plan"></div>
+    <div class="error" id="error" hidden></div>
+
+    <div class="actions">
+      <button class="play" id="playBtn" type="button">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M7 4.5v15a1 1 0 0 0 1.5.86l12-7.5a1 1 0 0 0 0-1.72l-12-7.5A1 1 0 0 0 7 4.5z"/></svg>
+        Start
+      </button>
+      <span class="hint">Press Space to start · Esc or the red button stops</span>
+    </div>
+    <div class="actions" id="lastSessionRow" hidden>
+      <button class="btn" id="lastSessionBtn" type="button">View last session's results</button>
+    </div>
+  </div>
+</section>
+
+<!-- ================= STAGE ================= -->
+<section id="stage" hidden>
+  <div id="dot"></div>
+  <div id="word" hidden></div>
+  <div id="controls">
+    <span id="clock">00:00</span>
+    <button class="stop" id="stopBtn" type="button" title="Stop session" aria-label="Stop session"><span></span></button>
+  </div>
+</section>
+
+<!-- ================= RESULTS ================= -->
+<section id="results" class="screen" hidden>
+  <div class="card">
+    <h1 id="resTitle">Session complete</h1>
+    <p class="sub" id="resSub"></p>
+    <div class="stats" id="resStats"></div>
+
+    <h2>Trigger word presentations</h2>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th class="num">#</th><th class="num">Trial</th><th>Word</th>
+            <th class="num">Start (from 00:00)</th><th class="num">End (from 00:00)</th>
+            <th>Start (local time)</th><th>End (local time)</th>
+            <th class="num">Shown for (ms)</th><th>Note</th>
+          </tr>
+        </thead>
+        <tbody id="resTable"></tbody>
+      </table>
+    </div>
+
+    <div class="actions">
+      <button class="btn" id="dlTrig" type="button">Download trigger log (CSV)</button>
+      <button class="btn" id="dlAll" type="button">Download full log (CSV)</button>
+      <button class="btn" id="dlJson" type="button">Download everything (JSON)</button>
+      <button class="play" id="againBtn" type="button" style="margin-left:auto">New session</button>
+    </div>
+  </div>
+</section>
+
+<script>
+/* ------------------------------------------------------------------
+   Word pool: concrete, emotionally neutral nouns unrelated to the
+   trigger. Most are 8 letters to match "activate"; the shorter/longer
+   ones are fallbacks if the trigger word is changed.
+------------------------------------------------------------------- */
+const WORD_POOL = [
+  // 8 letters
+  "mountain","envelope","bracelet","squirrel","cucumber","notebook","umbrella","dinosaur",
+  "sandwich","elephant","calendar","triangle","lavender","seashell","backpack","hedgehog",
+  "necklace","broccoli","flamingo","mushroom","shoelace","teaspoon","doorknob","pinecone",
+  "cardigan","magazine","kangaroo","meatball","sailboat","lollipop","cupboard","aquarium",
+  "mandolin","tortoise","pavement","windmill","raincoat","toboggan","dumpling","pancakes",
+  // 7 and 9 letters
+  "blanket","giraffe","pumpkin","lantern","cabbage","pelican","harbour","walnuts",
+  "pineapple","butterfly","raspberry","telescope","chocolate","porcupine","snowflake","cranberry",
+  // shorter / longer fallbacks
+  "apple","tiger","river","cloud","pencil","garden","carpet","button","basket","candle",
+  "strawberry","lighthouse","wheelbarrow","watermelon"
+];
+
+const $ = id => document.getElementById(id);
+const LAST_KEY = "wordStim.lastSession";
+
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+/* Pick n distinct words closest in length to the trigger word. */
+function pickWords(trigger, n) {
+  const t = trigger.trim().toLowerCase();
+  const pool = WORD_POOL.filter(w => w !== t);
+  const out = [];
+  for (let d = 0; out.length < n && d <= 20; d++) {
+    const tier = shuffle(pool.filter(w => Math.abs(w.length - t.length) === d));
+    out.push(...tier.slice(0, n - out.length));
+  }
+  return out;
+}
+
+function parseWords(text, trigger) {
+  const t = trigger.trim().toLowerCase();
+  const seen = new Set();
+  return text.split(/[\s,;]+/).map(w => w.trim().toLowerCase())
+    .filter(w => w && w !== t && !seen.has(w) && seen.add(w));
+}
+
+/* ------------------------------------------------------------------
+   Config + plan
+------------------------------------------------------------------- */
+function readConfig() {
+  const trigger = $("cfgTrigger").value.trim().toLowerCase();
+  const cfg = {
+    trigger,
+    words: parseWords($("cfgWords").value, trigger),
+    triggerShare: Number($("cfgShare").value) / 100,
+    wordMinMs: Math.round(Number($("cfgWordMin").value) * 1000),
+    wordMaxMs: Math.round(Number($("cfgWordMax").value) * 1000),
+    baselineMinMs: Math.round(Number($("cfgBaseMin").value) * 1000),
+    baselineMaxMs: Math.round(Number($("cfgBaseMax").value) * 1000),
+    sessionMs: Math.round(Number($("cfgSession").value) * 60000),
+    fullscreen: $("cfgFullscreen").checked,
+  };
+  // Expected counts (the exact number depends on the random baselines drawn at start).
+  cfg.baselineMeanMs = (cfg.baselineMinMs + cfg.baselineMaxMs) / 2;
+  cfg.wordMeanMs = (cfg.wordMinMs + cfg.wordMaxMs) / 2;
+  const trialMs = cfg.wordMeanMs + cfg.baselineMeanMs;
+  cfg.nTrials = trialMs > 0 ? Math.max(0, Math.floor((cfg.sessionMs - cfg.baselineMeanMs) / trialMs)) : 0;
+  cfg.nTrigger = Math.round(cfg.nTrials * cfg.triggerShare);
+  cfg.nOther = cfg.nTrials - cfg.nTrigger;
+
+  const errors = [];
+  if (!trigger) errors.push("Enter a trigger word.");
+  if (!(cfg.wordMinMs > 0)) errors.push("Word duration minimum must be greater than 0.");
+  if (!(cfg.wordMaxMs >= cfg.wordMinMs)) errors.push("Word duration maximum must be at least the minimum.");
+  if (!(cfg.baselineMinMs >= 0)) errors.push("Baseline minimum can't be negative.");
+  if (!(cfg.baselineMaxMs >= cfg.baselineMinMs)) errors.push("Baseline maximum must be at least the minimum.");
+  if (!(cfg.triggerShare > 0 && cfg.triggerShare < 1)) errors.push("Trigger share must be between 1 and 99%.");
+  if (cfg.nOther > 0 && cfg.words.length === 0) errors.push("Add at least one other word.");
+  if (cfg.baselineMinMs + cfg.wordMinMs + cfg.baselineMinMs > cfg.sessionMs) errors.push("Session is too short to fit a single word.");
+  cfg.errors = errors;
+  return cfg;
+}
+
+function fmtSec(ms) { return (ms / 1000).toLocaleString(undefined, { maximumFractionDigits: 2 }) + " s"; }
+
+function renderPlan() {
+  const cfg = readConfig();
+  $("cfgCount").value = cfg.words.length || $("cfgCount").value;
+  const baseJitter = cfg.baselineMaxMs > cfg.baselineMinMs;
+  const wordJitter = cfg.wordMaxMs > cfg.wordMinMs;
+  const jitter = baseJitter || wordJitter;
+  const baseTxt = baseJitter
+    ? `a random ${fmtSec(cfg.baselineMinMs)}–${fmtSec(cfg.baselineMaxMs)} baseline (mean ${fmtSec(cfg.baselineMeanMs)})`
+    : `a ${fmtSec(cfg.baselineMinMs)} baseline`;
+  const wordTxt = wordJitter
+    ? `a random ${fmtSec(cfg.wordMinMs)}–${fmtSec(cfg.wordMaxMs)} (mean ${fmtSec(cfg.wordMeanMs)})`
+    : fmtSec(cfg.wordMinMs);
+  $("plan").innerHTML = cfg.nTrials > 0
+    ? `${jitter ? "About " : ""}<b>${cfg.nTrials}</b> words in total: <b>${cfg.nTrigger}</b> × “${escapeHtml(cfg.trigger)}” and <b>${cfg.nOther}</b> other words
+       (${cfg.words.length} distinct, each shown ~${cfg.words.length ? (cfg.nOther / cfg.words.length).toFixed(1) : 0}×).<br>
+       Starts with ${baseTxt}, then each word is shown for ${wordTxt} and followed by ${baseTxt}.
+       ${jitter ? "Durations are drawn afresh each session, so timings are unpredictable. " : ""}
+       Session ends at <b>${fmtClock(cfg.sessionMs)}</b>; the final baseline runs to the end.`
+    : "Session is too short for the chosen durations.";
+  $("error").hidden = cfg.errors.length === 0;
+  $("error").textContent = cfg.errors.join(" ");
+  $("playBtn").disabled = cfg.errors.length > 0;
+}
+
+function regenerateWords() {
+  const n = Math.max(1, Math.min(50, Math.floor(Number($("cfgCount").value) || 10)));
+  $("cfgWords").value = pickWords($("cfgTrigger").value, n).join(", ");
+  renderPlan();
+}
+
+/* ------------------------------------------------------------------
+   Schedule: baseline, then [word, baseline] × nTrials.
+   Each baseline is drawn uniformly from [min, max], so word onsets are
+   jittered; words are added until the session is full. Trigger/other
+   order is shuffled with no more than 3 of the same type in a row, and
+   the same other word never appears twice in a row.
+------------------------------------------------------------------- */
+function maxRun(arr, key = x => x) {
+  let best = 0, run = 0;
+  for (let i = 0; i < arr.length; i++) {
+    run = i > 0 && key(arr[i]) === key(arr[i - 1]) ? run + 1 : 1;
+    best = Math.max(best, run);
+  }
+  return best;
+}
+
+function bestShuffle(items, limit, key) {
+  let order = shuffle(items.slice());
+  for (let tries = 0; tries < 2000 && maxRun(order, key) > limit; tries++) order = shuffle(items.slice());
+  return order;
+}
+
+function buildSchedule(cfg) {
+  const draw = (min, max) => Math.round(min + Math.random() * (max - min));
+
+  // Draw the durations first: keep adding words while a word plus at least
+  // a minimum baseline still fits before the session ends. A drawn word that
+  // would overrun is shortened to the minimum, if that still fits.
+  const baselines = [draw(cfg.baselineMinMs, cfg.baselineMaxMs)];
+  const wordDurs = [];
+  let t = baselines[0];
+  while (t + cfg.wordMinMs + cfg.baselineMinMs <= cfg.sessionMs) {
+    let w = draw(cfg.wordMinMs, cfg.wordMaxMs);
+    if (t + w + cfg.baselineMinMs > cfg.sessionMs) w = cfg.wordMinMs;
+    const b = draw(cfg.baselineMinMs, cfg.baselineMaxMs);
+    wordDurs.push(w);
+    baselines.push(b);
+    t += w + b;
+  }
+  cfg.nTrials = wordDurs.length;
+  cfg.nTrigger = Math.round(cfg.nTrials * cfg.triggerShare);
+  cfg.nOther = cfg.nTrials - cfg.nTrigger;
+
+  const types = bestShuffle(
+    [...Array(cfg.nTrigger).fill("trigger"), ...Array(cfg.nOther).fill("other")], 3);
+
+  // Balanced use of the other words, then shuffled so none repeats back-to-back.
+  let others = [];
+  while (others.length < cfg.nOther) others.push(...shuffle(cfg.words.slice()));
+  others = bestShuffle(others.slice(0, cfg.nOther), 1);
+
+  const segs = [{ kind: "baseline", type: "", word: "", trial: 0, start: 0 }];
+  t = baselines[0];
+  let oi = 0;
+  types.forEach((type, i) => {
+    const word = type === "trigger" ? cfg.trigger : others[oi++];
+    segs.push({ kind: "word", type, word, trial: i + 1, start: t });
+    segs.push({ kind: "baseline", type: "", word: "", trial: i + 1, start: t + wordDurs[i] });
+    t += wordDurs[i] + baselines[i + 1];
+  });
+  segs.forEach((s, i) => s.end = i + 1 < segs.length ? segs[i + 1].start : cfg.sessionMs);
+  return segs;
+}
+
+/* ------------------------------------------------------------------
+   Run loop. Uses requestAnimationFrame + performance.now() so that
+   timing is anchored to session start (no drift) and onsets are the
+   timestamp of the frame in which the stimulus was drawn.
+------------------------------------------------------------------- */
+let run = null;
+let lastSession = null;
+
+async function startSession() {
+  const cfg = readConfig();
+  if (cfg.errors.length || run) return;
+
+  run = { cfg, segs: buildSchedule(cfg), idx: -1, log: [], notes: [], t0: null, raf: 0, lastClock: -1, wakeLock: null };
+  run.id = new Date().toISOString().replace(/[:.]/g, "-");
+
+  showStimulus(null);
+  $("setup").hidden = true;
+  $("results").hidden = true;
+  $("stage").hidden = false;
+  $("clock").textContent = `00:00 / ${fmtClock(cfg.sessionMs)}`;
+
+  if (cfg.fullscreen && document.documentElement.requestFullscreen && !document.fullscreenElement) {
+    try { await document.documentElement.requestFullscreen(); } catch (e) { /* not allowed – carry on */ }
+    await new Promise(r => setTimeout(r, 300)); // let the fullscreen transition settle
+  }
+  try { run.wakeLock = await navigator.wakeLock?.request("screen"); } catch (e) { /* optional */ }
+  if (!run) return; // stopped during fullscreen transition
+
+  run.raf = requestAnimationFrame(ts => {
+    run.t0 = ts;
+    run.startEpoch = performance.timeOrigin + ts;
+    tick(ts);
+  });
+}
+
+function tick(ts) {
+  const t = ts - run.t0;
+  if (t >= run.cfg.sessionMs) {
+    closeEntry(ts);
+    endSession(false);
+    return;
+  }
+
+  let target = run.idx;
+  while (target + 1 < run.segs.length && t >= run.segs[target + 1].start) target++;
+  if (target !== run.idx) {
+    if (target > run.idx + 1) run.notes.push(`Skipped ${target - run.idx - 1} segment(s) at ${fmtClock(t)} (tab was likely in the background)`);
+    closeEntry(ts);
+    run.idx = target;
+    const seg = run.segs[target];
+    showStimulus(seg);
+    run.log.push({
+      seq: run.log.length + 1,
+      trial: seg.trial,
+      segment: seg.kind,
+      stimulus_type: seg.type,
+      word: seg.word,
+      planned_onset_ms: seg.start,
+      planned_duration_ms: seg.end - seg.start,
+      onset_ms: t,
+      onset_epoch_ms: run.startEpoch + t,
+      offset_ms: null,
+      offset_epoch_ms: null,
+      duration_ms: null,
+      complete: false,
+    });
+  }
+
+  const sec = Math.floor(t / 1000);
+  if (sec !== run.lastClock) {
+    run.lastClock = sec;
+    $("clock").textContent = `${fmtClock(t)} / ${fmtClock(run.cfg.sessionMs)}`;
+  }
+  run.raf = requestAnimationFrame(tick);
+}
+
+function closeEntry(ts) {
+  const e = run.log[run.log.length - 1];
+  if (!e || e.offset_ms !== null) return;
+  const t = Math.min(ts - run.t0, run.cfg.sessionMs);
+  e.offset_ms = t;
+  e.offset_epoch_ms = run.startEpoch + t;
+  e.duration_ms = t - e.onset_ms;
+  e.complete = e.duration_ms >= e.planned_duration_ms - 20; // within ~1 frame of planned
+}
+
+function showStimulus(seg) {
+  const isWord = seg && seg.kind === "word";
+  $("dot").hidden = isWord;
+  $("word").hidden = !isWord;
+  $("word").textContent = isWord ? seg.word : "";
+}
+
+function stopSession() {
+  if (!run) return;
+  cancelAnimationFrame(run.raf);
+  if (run.t0 === null) {            // stopped before the first frame
+    run = null; leaveStage(); $("setup").hidden = false; return;
+  }
+  closeEntry(performance.now());
+  endSession(true);
+}
+
+function endSession(stopped) {
+  const r = run;
+  run = null;
+  r.wakeLock?.release?.().catch(() => {});
+  const last = r.log[r.log.length - 1];
+  lastSession = {
+    session_id: r.id,
+    stopped_early: stopped,
+    started_utc: new Date(r.startEpoch).toISOString(),
+    ended_utc: new Date(last ? last.offset_epoch_ms : r.startEpoch).toISOString(),
+    elapsed_ms: last ? last.offset_ms : 0,
+    notes: r.notes,
+    config: {
+      trigger_word: r.cfg.trigger,
+      other_words: r.cfg.words,
+      trigger_share: r.cfg.triggerShare,
+      word_min_ms: r.cfg.wordMinMs,
+      word_max_ms: r.cfg.wordMaxMs,
+      baseline_min_ms: r.cfg.baselineMinMs,
+      baseline_max_ms: r.cfg.baselineMaxMs,
+      session_duration_ms: r.cfg.sessionMs,
+      planned_trials: r.cfg.nTrials,
+      planned_trigger_trials: r.cfg.nTrigger,
+      planned_other_trials: r.cfg.nOther,
+    },
+    events: r.log,
+  };
+  try { localStorage.setItem(LAST_KEY, JSON.stringify(lastSession)); } catch (e) {}
+  leaveStage();
+  renderResults(lastSession);
+}
+
+function leaveStage() {
+  $("stage").hidden = true;
+  if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+}
+
+document.addEventListener("visibilitychange", () => {
+  if (run && run.t0 !== null && document.hidden) {
+    run.notes.push(`Window hidden at ${fmtClock(performance.now() - run.t0)} – timing may be affected`);
+  }
+});
+
+/* ------------------------------------------------------------------
+   Results + export
+------------------------------------------------------------------- */
+function fmtClock(ms) {
+  const s = Math.max(0, Math.floor(ms / 1000));
+  return `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`;
+}
+function fmtClockMs(ms) {
+  return `${fmtClock(ms)}.${String(Math.floor(ms % 1000)).padStart(3, "0")}`;
+}
+function fmtLocal(epochMs) {
+  const d = new Date(epochMs);
+  const p = (n, w = 2) => String(n).padStart(w, "0");
+  return `${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}.${p(d.getMilliseconds(), 3)}`;
+}
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+}
+
+function renderResults(s) {
+  const words = s.events.filter(e => e.segment === "word");
+  const trig = words.filter(e => e.stimulus_type === "trigger");
+  const fullTrig = trig.filter(e => e.complete);
+  const mean = fullTrig.length ? fullTrig.reduce((a, e) => a + e.duration_ms, 0) / fullTrig.length : 0;
+
+  $("resTitle").textContent = s.stopped_early ? "Session stopped" : "Session complete";
+  $("resSub").textContent = `00:00 = ${new Date(s.started_utc).toLocaleDateString()} ${fmtLocal(Date.parse(s.started_utc))} local time · ran ${fmtClock(s.elapsed_ms)} of ${fmtClock(s.config.session_duration_ms)}`
+    + (s.notes.length ? ` · ⚠ ${s.notes.join("; ")}` : "");
+  $("resStats").innerHTML = [
+    ["“" + s.config.trigger_word + "” shown", `${trig.length} / ${s.config.planned_trigger_trials}`],
+    ["Other words shown", `${words.length - trig.length} / ${s.config.planned_other_trials}`],
+    ["Mean trigger duration", fullTrig.length ? `${mean.toFixed(1)} ms` : "–"],
+    ["Elapsed", fmtClock(s.elapsed_ms)],
+  ].map(([k, v]) => `<div class="stat"><div>${escapeHtml(k)}</div><div>${escapeHtml(v)}</div></div>`).join("");
+
+  $("resTable").innerHTML = trig.length ? trig.map((e, i) => `
+    <tr>
+      <td class="num">${i + 1}</td>
+      <td class="num">${e.trial}</td>
+      <td class="tag">${escapeHtml(e.word)}</td>
+      <td class="num">${fmtClockMs(e.onset_ms)}</td>
+      <td class="num">${fmtClockMs(e.offset_ms)}</td>
+      <td>${fmtLocal(e.onset_epoch_ms)}</td>
+      <td>${fmtLocal(e.offset_epoch_ms)}</td>
+      <td class="num">${e.duration_ms.toFixed(1)}</td>
+      <td>${e.complete ? "" : '<span class="warn">cut short (stopped)</span>'}</td>
+    </tr>`).join("")
+    : `<tr><td colspan="9" class="hint">The trigger word was not shown before the session ended.</td></tr>`;
+
+  $("results").hidden = false;
+  $("lastSessionRow").hidden = false;
+  window.scrollTo(0, 0);
+}
+
+const CSV_COLS = [
+  "session_id", "seq", "trial", "segment", "stimulus_type", "word",
+  "planned_onset_s", "onset_s", "offset_s", "duration_ms",
+  "onset_epoch_ms", "offset_epoch_ms", "onset_utc", "offset_utc", "complete",
+];
+
+function toCsv(s, events) {
+  const q = v => {
+    const str = v === null || v === undefined ? "" : String(v);
+    return /[",\n]/.test(str) ? `"${str.replace(/"/g, '""')}"` : str;
+  };
+  const rows = events.map(e => [
+    s.session_id, e.seq, e.trial, e.segment, e.stimulus_type, e.word,
+    (e.planned_onset_ms / 1000).toFixed(3), (e.onset_ms / 1000).toFixed(4), (e.offset_ms / 1000).toFixed(4),
+    e.duration_ms.toFixed(1), e.onset_epoch_ms.toFixed(1), e.offset_epoch_ms.toFixed(1),
+    new Date(e.onset_epoch_ms).toISOString(), new Date(e.offset_epoch_ms).toISOString(), e.complete,
+  ].map(q).join(","));
+  return [CSV_COLS.join(","), ...rows].join("\n") + "\n";
+}
+
+function download(name, text, type) {
+  const url = URL.createObjectURL(new Blob([text], { type }));
+  const a = Object.assign(document.createElement("a"), { href: url, download: name });
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+$("dlTrig").onclick = () => download(`stim_${lastSession.session_id}_triggers.csv`,
+  toCsv(lastSession, lastSession.events.filter(e => e.stimulus_type === "trigger")), "text/csv");
+$("dlAll").onclick = () => download(`stim_${lastSession.session_id}_all.csv`,
+  toCsv(lastSession, lastSession.events), "text/csv");
+$("dlJson").onclick = () => download(`stim_${lastSession.session_id}.json`,
+  JSON.stringify(lastSession, null, 2), "application/json");
+
+/* ------------------------------------------------------------------
+   Wiring
+------------------------------------------------------------------- */
+$("playBtn").onclick = startSession;
+$("stopBtn").onclick = stopSession;
+$("againBtn").onclick = () => { $("results").hidden = true; $("setup").hidden = false; renderPlan(); };
+$("lastSessionBtn").onclick = () => { $("setup").hidden = true; renderResults(lastSession); };
+$("shuffleBtn").onclick = regenerateWords;
+$("cfgCount").addEventListener("change", regenerateWords);
+$("cfgTrigger").addEventListener("change", regenerateWords);
+$("cfgWords").addEventListener("input", renderPlan);
+["cfgShare", "cfgWordMin", "cfgWordMax", "cfgBaseMin", "cfgBaseMax", "cfgSession", "cfgTrigger"].forEach(id => $(id).addEventListener("input", renderPlan));
+
+document.addEventListener("keydown", e => {
+  if (run && e.key === "Escape") { e.preventDefault(); stopSession(); return; }
+  const typing = /^(INPUT|TEXTAREA|BUTTON)$/.test(e.target.tagName);
+  if (!run && !$("setup").hidden && e.code === "Space" && !typing) { e.preventDefault(); startSession(); }
+});
+
+try {
+  const saved = JSON.parse(localStorage.getItem(LAST_KEY) || "null");
+  if (saved && saved.events) { lastSession = saved; $("lastSessionRow").hidden = false; }
+} catch (e) {}
+
+regenerateWords();
+</script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+{
+  "session_id": "2026-11-07T21-12-50-563Z",
+  "type": "baseline",
+  "stopped_manually": false,
+  "planned_duration_ms": 120000,
+  "start_epoch_ms": 1794085970829.1,
+  "end_epoch_ms": 1794086090829.1,
+  "start_utc": "2026-11-07T21:12:50.829Z",
+  "end_utc": "2026-11-07T21:14:50.829Z",
+  "start_local": "2026-11-07 16:12:50.829",
+  "end_local": "2026-11-07 16:14:50.829",
+  "duration_ms": 120000,
+  "notes": []
+}

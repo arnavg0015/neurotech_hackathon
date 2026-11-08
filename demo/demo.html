@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EEG Detection</title>
+<style>
+  :root { color-scheme: light; --ink: #252820; --muted: #74796d; --line: #dedfd6; --yellow: #f5c744; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #f6f6f1; color: var(--ink); font: 14px system-ui, sans-serif; }
+  main { max-width: 1220px; margin: auto; padding: 24px 30px; }
+  header, .controls, .chart-heading { display: flex; align-items: center; justify-content: space-between; gap: 18px; }
+  h1 { margin: 0 0 5px; font-size: 25px; letter-spacing: -.8px; font-weight: 650; }
+  p { margin: 0; }
+  .muted { color: var(--muted); }
+  .hero { display: grid; grid-template-columns: 310px 1fr 1fr; align-items: center; margin: 20px 0; padding: 14px 24px; min-height: 280px; background: white; border: 1px solid var(--line); border-radius: 16px; }
+  .selector-wrap { text-align: center; }
+  .selector { width: 260px; height: 260px; overflow: visible; }
+  .lamp-number { fill: #74796d; font: 12px system-ui; text-anchor: middle; }
+  .lamp.on { --bulb-fill: #ffe496; --bulb-stroke: #bd8d10; --filament: #a16d00; --halo: .65; }
+  .lamp.on .lamp-number { fill: #976900; font-weight: 700; }
+  .glass { fill: var(--bulb-fill, #f4f4ee); stroke: var(--bulb-stroke, #b0b3a7); stroke-width: 2; transition: fill .12s, stroke .12s; }
+  .filament { fill: none; stroke: var(--filament, #b0b3a7); stroke-width: 2.5; stroke-linecap: round; }
+  .halo { fill: #ffe394; opacity: var(--halo, 0); transition: opacity .12s; }
+  .readout { padding: 12px 26px; border-left: 1px solid var(--line); min-width: 0; }
+  .eyebrow { font-size: 10px; letter-spacing: 1.3px; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+  .word { font-size: clamp(23px, 3vw, 38px); font-weight: 600; letter-spacing: -1px; overflow-wrap: anywhere; line-height: 1.2; }
+  .decision { font-size: 28px; font-weight: 550; letter-spacing: -.8px; }
+  .controls { margin-bottom: 11px; }
+  .buttons { display: flex; gap: 7px; }
+  button { font: inherit; padding: 9px 17px; border-radius: 7px; border: 1px solid #cfd1c6; background: white; color: var(--ink); cursor: pointer; }
+  button.primary { background: var(--ink); color: white; border-color: var(--ink); }
+  button:hover:not(:disabled) { filter: brightness(.94); }
+  button:focus-visible { outline: 3px solid #bfa747; outline-offset: 3px; }
+  button:disabled { opacity: .35; cursor: default; }
+  .clock { font-variant-numeric: tabular-nums; text-align: right; }
+  progress { display: block; width: 100%; height: 4px; border: 0; border-radius: 3px; overflow: hidden; background: #e4e5dd; accent-color: #929983; }
+  progress::-webkit-progress-bar { background: #e4e5dd; }
+  progress::-webkit-progress-value { background: #929983; }
+  .chart { margin-top: 20px; background: white; border: 1px solid var(--line); border-radius: 12px; padding: 15px 16px 10px; }
+  .chart-heading { margin-bottom: 8px; font-size: 12px; }
+  .chart-heading strong { font-weight: 600; }
+  .legend { color: var(--muted); }
+  .legend::before { content: ""; display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--yellow); margin-right: 6px; }
+  canvas { display: block; width: 100%; height: 484px; }
+  #error { background: #fff0e9; border: 1px solid #e6b7a6; padding: 12px; margin: 12px 0; border-radius: 7px; color: #803821; }
+  @media (max-width: 700px) {
+    main { padding: 18px 12px; }
+    .hero { grid-template-columns: 1fr 1fr; padding: 12px; gap: 10px; }
+    .selector-wrap { grid-column: span 2; }
+    .selector { width: 230px; height: 230px; }
+    .readout { padding: 10px; border-left: 0; border-top: 1px solid var(--line); }
+    .word, .decision { font-size: 25px; }
+    .chart { padding: 12px 7px; } .chart-heading { align-items: start; font-size: 10px; }
+    button { padding: 9px 11px; } .clock { font-size: 12px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .glass, .halo { transition: none; } }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>EEG Detection</h1>
+  </header>
+  <section class="hero" aria-label="Stimulus and model output">
+    <div class="selector-wrap">
+      <svg id="selector" class="selector" viewBox="0 0 300 300" role="img" aria-label="Six bulbs, waiting for activation">
+        <defs>
+          <filter id="glow"><feGaussianBlur stdDeviation="10"/></filter>
+          <g id="bulb-shape">
+            <circle class="halo" cx="60" cy="57" r="48" filter="url(#glow)"/>
+            <path class="glass" d="M60 14C37 14 23 31 23 52c0 17 8 26 18 37 4 5 5 12 5 17h28c0-5 1-12 5-17 10-11 18-20 18-37C97 31 83 14 60 14Z"/>
+            <path class="filament" d="M51 105V76L42 62l12 5 6-10 6 10 12-5-9 14v29"/>
+            <path d="M45 110h30m-29 7h28m-27 7h26" stroke="#939789" stroke-width="4" stroke-linecap="round"/>
+            <path d="M50 131h20l-5 6H55Z" fill="#939789"/>
+          </g>
+        </defs>
+        <g id="lamps"></g>
+        <g id="arrow" opacity="0.2" transform="rotate(0 150 150)">
+          <path d="M150 150V94" fill="none" stroke="#65724e" stroke-width="3" stroke-linecap="round"/>
+          <path d="M143 103L150 91L157 103" fill="none" stroke="#65724e" stroke-width="3" stroke-linejoin="round"/>
+          <circle cx="150" cy="150" r="5" fill="#65724e"/>
+        </g>
+      </svg>
+    </div>
+    <div class="readout" aria-live="polite">
+      <p class="eyebrow">Recorded stimulus</p>
+      <p id="word" class="word">Loading…</p>
+    </div>
+    <div class="readout" aria-live="polite">
+      <p id="model-label" class="eyebrow">Activation model</p>
+      <p id="decision" class="decision">Waiting</p>
+    </div>
+  </section>
+  <div id="error" role="alert" hidden></div>
+  <div class="controls">
+    <div class="buttons">
+      <button id="play" class="primary" disabled>Play</button>
+      <button id="pause" disabled>Pause</button>
+      <button id="restart" disabled>Restart</button>
+    </div>
+    <div id="clock" class="clock">00:00.0 / 05:00.0</div>
+  </div>
+  <progress id="progress" value="0" max="300" aria-label="Replay progress"></progress>
+  <section class="chart" aria-label="EEG signal and stimulus timeline">
+    <div class="chart-heading"><strong>EEG stream <span class="muted">/ last 10 seconds</span></strong><div id="legend-label" class="legend">Activation detected</div></div>
+    <canvas id="signal" role="img" aria-label="Scrolling EEG traces for all 21 channels with word and blank segments"></canvas>
+  </section>
+</main>
+<script>
+const $ = id => document.getElementById(id);
+const canvas = $("signal"), ctx = canvas.getContext("2d");
+let sessions = {}, session = null, stage = "activation", eligible = [];
+let time = 0, playing = false, finished = false, failed = false, generation = 0;
+let nextPrediction = 0, pending = null, held = null, latest = null, selectedBulb = null;
+let markers = [], lastTick = performance.now(), lastDraw = 0;
+
+function clock(seconds) {
+  const tenths = Math.floor(Math.max(0, seconds) * 10 + 1e-7);
+  return `${String(Math.floor(tenths / 600)).padStart(2, "0")}:${String(Math.floor(tenths / 10) % 60).padStart(2, "0")}.${tenths % 10}`;
+}
+function text(id, value) { if ($(id).textContent !== value) $(id).textContent = value; }
+function fail(message) {
+  playing = false; failed = true;
+  $("error").textContent = message + " Restart to try again.";
+  $("error").hidden = false;
+  render();
+}
+async function predict(event) {
+  const run = generation, requestStage = stage, controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 10000);
+  pending = controller;
+  try {
+    const response = await fetch("/api/predict", {
+      method: "POST", headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({stage: requestStage, event_id: event.id}), signal: controller.signal
+    });
+    const result = await response.json();
+    if (run !== generation) return;
+    if (!response.ok) throw new Error(result.error || "Inference failed.");
+    if (result.stage !== requestStage || result.event_id !== event.id || ![0, 1].includes(result.predicted)) throw new Error("Unexpected model response.");
+    held = result;
+  } catch (error) {
+    if (run === generation) fail(error.name === "AbortError" ? "Model request timed out." : error.message);
+  } finally {
+    clearTimeout(timeout);
+    if (run === generation) pending = null;
+  }
+}
+function useStage(nextStage) {
+  generation++; pending?.abort(); pending = null; held = null;
+  stage = nextStage; session = sessions[stage];
+  eligible = session.events.filter(e => e.ready_at !== null).sort((a, b) => a.ready_at - b.ready_at);
+  time = 0; nextPrediction = 0; latest = null; selectedBulb = null; markers = []; finished = false;
+  $("progress").max = session.duration; lastTick = performance.now();
+}
+function pointedBulb() { return selectedBulb ?? (stage === "blink" ? Math.floor(time) % 6 + 1 : 1); }
+function applyPrediction(result) {
+  if (result.stage !== stage) return;
+  latest = result;
+  if (result.predicted !== 1) return;
+  if (stage === "activation") { useStage("blink"); return; }
+  markers.push({time, event_id: result.event_id});
+  selectedBulb = pointedBulb(); playing = false; finished = true;
+}
+function start() {
+  if (!session || failed || finished) return;
+  playing = true; lastTick = performance.now(); render();
+}
+function pause() { playing = false; render(); }
+function restart() {
+  if (!sessions.activation || !sessions.blink) return location.reload();
+  useStage("activation"); playing = false; failed = false;
+  $("error").hidden = true; render(); draw();
+}
+function render() {
+  const bulb = pointedBulb();
+  $("arrow").setAttribute("transform", `rotate(${(bulb - 1) * 60} 150 150)`);
+  $("arrow").setAttribute("opacity", stage === "blink" ? "1" : "0.2");
+  document.querySelectorAll(".lamp").forEach((lamp, i) => lamp.classList.toggle("on", selectedBulb === i + 1));
+  $("selector").setAttribute("aria-label", selectedBulb ? `Bulb ${selectedBulb} selected` :
+    stage === "blink" ? `Arrow pointing at bulb ${bulb}` : "Six bulbs, waiting for activation");
+  $("play").disabled = !session || playing || finished || failed;
+  $("pause").disabled = !playing;
+  $("restart").disabled = !session && !failed;
+  if (!session) return;
+  const event = session.events.find(e => e.start <= time && e.end > time) || session.events.at(-1);
+  text("word", event.word);
+  text("model-label", stage === "activation" ? "Activation model" : "Double-blink model");
+  const positive = stage === "activation" ? "Activate" : "Double blink";
+  const negative = stage === "activation" ? "Not activate" : "No double blink";
+  text("decision", finished && selectedBulb === null ? "Not detected" : latest ? (latest.predicted ? positive : negative) : "Waiting");
+  text("legend-label", stage === "activation" ? "Activation detected" : "Double blink detected");
+  text("clock", `${clock(time)} / ${clock(session.duration)}`);
+  $("progress").value = time;
+}
+function draw() {
+  const width = canvas.clientWidth, height = 484, ratio = window.devicePixelRatio || 1;
+  if (canvas.width !== Math.round(width * ratio) || canvas.height !== Math.round(height * ratio)) {
+    canvas.width = Math.round(width * ratio); canvas.height = Math.round(height * ratio);
+  }
+  ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+  ctx.clearRect(0, 0, width, height);
+  if (!session) return;
+  const left = 84, right = width - 12, top = 58, rowHeight = 19;
+  const bottom = top + rowHeight * session.channels.length;
+  const start = Math.max(0, time - 10), x = t => left + (t - start) / 10 * (right - left);
+  const cursor = x(time), signal = session.signal;
+  ctx.font = "10px system-ui"; ctx.textBaseline = "middle";
+  for (let second = Math.ceil(start); second <= start + 10; second++) {
+    ctx.strokeStyle = "#eeefe9"; ctx.beginPath(); ctx.moveTo(x(second), top); ctx.lineTo(x(second), bottom); ctx.stroke();
+    ctx.fillStyle = "#85897f"; ctx.textAlign = "center"; ctx.fillText(`${second}s`, x(second), bottom + 15);
+  }
+  ctx.save(); ctx.beginPath(); ctx.rect(left, 0, right - left, bottom); ctx.clip();
+  for (const event of session.events) {
+    if (event.end <= start || event.start >= time) continue;
+    const a = Math.max(left, x(event.start)), b = Math.min(cursor, x(event.end));
+    ctx.fillStyle = event.kind === "blank" ? "#f0f1eb" : "#e2e5d9";
+    ctx.fillRect(a, 4, b - a, 28);
+    ctx.strokeStyle = "white"; ctx.strokeRect(a, 4, b - a, 28);
+    ctx.save(); ctx.beginPath(); ctx.rect(a + 3, 4, Math.max(0, b - a - 6), 28); ctx.clip();
+    ctx.fillStyle = "#454c3b"; ctx.textAlign = "left";
+    ctx.fillText(event.word, a + 6, 18); ctx.restore();
+    if (event.ready_at === null) {
+      ctx.strokeStyle = "#a5a99b"; ctx.setLineDash([2, 3]); ctx.beginPath();
+      ctx.moveTo(a, 34); ctx.lineTo(b, 34); ctx.stroke(); ctx.setLineDash([]);
+    }
+  }
+  for (const marker of markers) {
+    if (marker.time < start || marker.time > time) continue;
+    ctx.fillStyle = "#e8b832"; ctx.beginPath(); ctx.arc(x(marker.time), 45, 3.5, 0, 2 * Math.PI); ctx.fill();
+    ctx.strokeStyle = "#e6c66c"; ctx.setLineDash([2, 4]); ctx.beginPath();
+    ctx.moveTo(x(marker.time), top); ctx.lineTo(x(marker.time), bottom); ctx.stroke(); ctx.setLineDash([]);
+  }
+  ctx.restore();
+  const first = Math.max(0, Math.floor((start - signal.start) / signal.step));
+  const last = Math.min(signal.min[0].length, Math.floor((time - signal.start) / signal.step));
+  session.channels.forEach((channel, ch) => {
+    const y = top + (ch + .5) * rowHeight, amplitude = rowHeight * .43, scale = signal.scales[ch];
+    ctx.fillStyle = "#454c3b"; ctx.font = "10px system-ui"; ctx.textAlign = "left"; ctx.fillText(channel, 0, y);
+    ctx.fillStyle = "#91968a"; ctx.textAlign = "right"; ctx.font = "9px system-ui"; ctx.fillText(`±${scale}`, left - 8, y);
+    ctx.strokeStyle = "#edf0e8"; ctx.beginPath(); ctx.moveTo(left, y); ctx.lineTo(right, y); ctx.stroke();
+    ctx.save(); ctx.beginPath(); ctx.rect(left, y - rowHeight / 2, right - left, rowHeight); ctx.clip();
+    ctx.strokeStyle = "#383f31"; ctx.lineWidth = .8; ctx.beginPath();
+    for (let i = first; i < last; i++) {
+      const px = x(signal.start + (i + 1) * signal.step);
+      const low = Math.max(-1, Math.min(1, signal.min[ch][i] / scale));
+      const high = Math.max(-1, Math.min(1, signal.max[ch][i] / scale));
+      if (i === first) ctx.moveTo(px, y - low * amplitude);
+      else ctx.lineTo(px, y - low * amplitude);
+      ctx.lineTo(px, y - high * amplitude);
+    }
+    ctx.stroke(); ctx.restore();
+  });
+  ctx.strokeStyle = "#7a826c"; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(cursor, 3); ctx.lineTo(cursor, bottom); ctx.stroke();
+}
+function frame(now) {
+  if (playing) {
+    time = Math.min(session.duration, time + Math.max(0, now - lastTick) / 1000);
+    if (held) { applyPrediction(held); held = null; }
+    if (playing && !pending && nextPrediction < eligible.length && eligible[nextPrediction].ready_at <= time) {
+      predict(eligible[nextPrediction++]);
+    }
+    if (playing && time >= session.duration && !pending && !held && nextPrediction === eligible.length) {
+      playing = false; finished = true;
+    }
+  }
+  lastTick = now;
+  if (now - lastDraw >= 33) { render(); draw(); lastDraw = now; }
+  requestAnimationFrame(frame);
+}
+$("play").addEventListener("click", start);
+$("pause").addEventListener("click", pause);
+$("restart").addEventListener("click", restart);
+window.addEventListener("resize", draw);
+document.addEventListener("visibilitychange", () => { if (document.hidden && playing) pause(); });
+
+for (let i = 0; i < 6; i++) {
+  const angle = i * Math.PI / 3, x = 150 + Math.sin(angle) * 108, y = 150 - Math.cos(angle) * 108;
+  $("lamps").insertAdjacentHTML("beforeend", `<g id="lamp-${i + 1}" class="lamp">
+    <use href="#bulb-shape" transform="translate(${x - 27.6} ${y - 32.2}) scale(.46)"/>
+    <text class="lamp-number" x="${x}" y="${y + 40}">${i + 1}</text></g>`);
+}
+async function load() {
+  try {
+    const entries = await Promise.all(["activation", "blink"].map(async name => {
+      const response = await fetch(`/api/session?stage=${name}`);
+      if (!response.ok) throw new Error(`Could not load the ${name} recording from the Python server.`);
+      const data = await response.json();
+      if (data.stage !== name || data.channels.length !== 21) throw new Error("Unexpected replay data. Restart the Python server.");
+      return [name, data];
+    }));
+    sessions = Object.fromEntries(entries); useStage("activation");
+    render(); draw();
+  } catch (error) { fail(error.message); }
+}
+load();
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>

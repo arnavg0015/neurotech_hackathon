@@ -1,0 +1,2 @@
+session_id,type,start_utc,end_utc,start_local,end_local,start_epoch_ms,end_epoch_ms,duration_ms,planned_duration_ms,stopped_manually,notes
+2026-11-07T21-12-50-563Z,baseline,2026-11-07T21:12:50.829Z,2026-11-07T21:14:50.829Z,2026-11-07 16:12:50.829,2026-11-07 16:14:50.829,1794085970829.1,1794086090829.1,120000.0,120000,false,

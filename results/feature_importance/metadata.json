@@ -1,0 +1,63 @@
+{
+  "ranking": "Trial-specific grouped permutation importance; balanced accuracy drop",
+  "repeats": 30,
+  "seed": 42,
+  "sources": {
+    "Activation": "results/hackathon_pipeline",
+    "Double blink": "results/blink_pipeline_all_channels"
+  },
+  "activation_train_trials": [
+    1,
+    2,
+    3,
+    4
+  ],
+  "activation_test_trial": 5,
+  "activation_channel_order": [
+    "C4",
+    "p8",
+    "p3",
+    "F10",
+    "o1",
+    "F9",
+    "pz",
+    "p4",
+    "p7",
+    "C3",
+    "F3",
+    "F4",
+    "F8",
+    "oz",
+    "T8",
+    "Fp2",
+    "F7",
+    "Fp1",
+    "Fz",
+    "Cz",
+    "T7"
+  ],
+  "features_per_channel": 5,
+  "classifier_parameters": {
+    "bootstrap": true,
+    "ccp_alpha": 0.0,
+    "class_weight": "balanced",
+    "criterion": "gini",
+    "max_depth": null,
+    "max_features": "sqrt",
+    "max_leaf_nodes": null,
+    "max_samples": null,
+    "min_impurity_decrease": 0.0,
+    "min_samples_leaf": 1,
+    "min_samples_split": 2,
+    "min_weight_fraction_leaf": 0.0,
+    "monotonic_cst": null,
+    "n_estimators": 300,
+    "n_jobs": null,
+    "oob_score": false,
+    "random_state": 42,
+    "verbose": 0,
+    "warm_start": false
+  },
+  "interpretation": "Trial 5 supplies ranking and evaluation: exploratory, not an independent test estimate.",
+  "preprocessing": "Existing 21-channel preprocessing retained; only model inputs are reduced."
+}

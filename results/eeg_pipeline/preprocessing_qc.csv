@@ -1,0 +1,6 @@
+trial,channels,sample_rate_hz,interpolated_channels,ica_components,blink_components_removed,ica_iterations,ica_converged
+1,21,250.0,[],19,"[1, 2]",24,True
+2,21,250.0,[],19,"[0, 4]",26,True
+3,21,250.0,"['Fp1', 'Fp2', 'pz']",17,[0],79,True
+4,21,250.0,"['Fp1', 'Fp2', 'Fz']",17,"[0, 1]",44,True
+5,21,250.0,"['Fp1', 'Fp2', 'Fz']",17,[0],38,True

@@ -1,0 +1,17 @@
+name: neurotech
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11
+  - pip
+  - pip:
+      - mne>=1.13
+      - antio
+      - pandas
+      - matplotlib
+      - ipykernel
+      - numpy
+      - scipy
+      - scikit-learn
+      - joblib
+      - cloudpickle

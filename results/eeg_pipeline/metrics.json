@@ -1,0 +1,262 @@
+{
+  "experiment": 2,
+  "condition": "spoken",
+  "train_trials": [
+    1,
+    2,
+    3
+  ],
+  "validation_trial": 4,
+  "test_trial": 5,
+  "refit_trials": [
+    1,
+    2,
+    3,
+    4
+  ],
+  "test_status": "excluded_from_model_and_threshold_selection",
+  "evaluation_mode": "offline; each full recording is preprocessed independently",
+  "selected_model": "SVC",
+  "selected_parameters": {
+    "model__C": "0.1",
+    "model__gamma": "scale"
+  },
+  "validation_balanced_accuracy": 0.9086538461538461,
+  "train_windows": 734,
+  "validation_windows": 238,
+  "test_windows": 243,
+  "preprocessing": {
+    "clock_offset_s": 15.6,
+    "dropped_channels": [
+      "M1",
+      "M2",
+      "o2"
+    ],
+    "montage": "colin27_1005",
+    "notch_hz": [
+      60.0,
+      120.0,
+      180.0,
+      240.0,
+      300.0,
+      360.0,
+      420.0,
+      480.0
+    ],
+    "filter_method": "fir",
+    "filter_phase": "zero",
+    "bandpass_hz": [
+      0.5,
+      45
+    ],
+    "sample_rate_hz": 250,
+    "bad_channel_robust_z": 5,
+    "flat_sd_volts": 1e-07,
+    "interpolate_bads": true,
+    "reference": "average",
+    "ica_method": "fastica",
+    "ica_fit_highpass_hz": 1.0,
+    "ica_max_components": 20,
+    "ica_max_exclude": 3,
+    "ica_seed": 97,
+    "cleaning_fit": "independent unsupervised cleaning per recording, including validation and test"
+  },
+  "channels": [
+    "Fp1",
+    "Fp2",
+    "F9",
+    "F7",
+    "F3",
+    "Fz",
+    "F4",
+    "F8",
+    "F10",
+    "T7",
+    "C3",
+    "C4",
+    "T8",
+    "Cz",
+    "p7",
+    "p3",
+    "pz",
+    "p4",
+    "p8",
+    "oz",
+    "o1"
+  ],
+  "feature_bands_hz": [
+    [
+      0.5,
+      4
+    ],
+    [
+      4,
+      8
+    ],
+    [
+      8,
+      13
+    ],
+    [
+      13,
+      30
+    ],
+    [
+      30,
+      45
+    ]
+  ],
+  "test_metrics": {
+    "Accuracy": 0.8024691358024691,
+    "Balanced accuracy": 0.8586854460093897,
+    "Activate precision": 0.3783783783783784,
+    "Activate recall": 0.9333333333333333,
+    "Activate F1": 0.5384615384615384,
+    "ROC AUC": 0.9430359937402192,
+    "Average precision": 0.7557698804487409
+  },
+  "always_not_activate": {
+    "Accuracy": 0.8765432098765432,
+    "Balanced accuracy": 0.5,
+    "Activate precision": 0.0,
+    "Activate recall": 0.0,
+    "Activate F1": 0.0,
+    "ROC AUC": 0.5,
+    "Average precision": 0.12345679012345678
+  },
+  "confusion_matrix": [
+    [
+      167,
+      46
+    ],
+    [
+      2,
+      28
+    ]
+  ],
+  "false_activations": [
+    {
+      "stimulus_type": "blank",
+      "windows": 122,
+      "false_activations": 16,
+      "false_activation_rate": 0.13114754098360656
+    },
+    {
+      "stimulus_type": "other word",
+      "windows": 91,
+      "false_activations": 30,
+      "false_activation_rate": 0.32967032967032966
+    }
+  ],
+  "quality_checks": [
+    {
+      "trial": 1,
+      "channels": 21,
+      "sample_rate_hz": 250.0,
+      "interpolated_channels": [],
+      "ica_components": 19,
+      "blink_components_removed": [
+        1,
+        2
+      ],
+      "ica_iterations": 24,
+      "ica_converged": true
+    },
+    {
+      "trial": 2,
+      "channels": 21,
+      "sample_rate_hz": 250.0,
+      "interpolated_channels": [],
+      "ica_components": 19,
+      "blink_components_removed": [
+        0,
+        4
+      ],
+      "ica_iterations": 26,
+      "ica_converged": true
+    },
+    {
+      "trial": 3,
+      "channels": 21,
+      "sample_rate_hz": 250.0,
+      "interpolated_channels": [
+        "Fp1",
+        "Fp2",
+        "pz"
+      ],
+      "ica_components": 17,
+      "blink_components_removed": [
+        0
+      ],
+      "ica_iterations": 79,
+      "ica_converged": true
+    },
+    {
+      "trial": 4,
+      "channels": 21,
+      "sample_rate_hz": 250.0,
+      "interpolated_channels": [
+        "Fp1",
+        "Fp2",
+        "Fz"
+      ],
+      "ica_components": 17,
+      "blink_components_removed": [
+        0,
+        1
+      ],
+      "ica_iterations": 44,
+      "ica_converged": true
+    },
+    {
+      "trial": 5,
+      "channels": 21,
+      "sample_rate_hz": 250.0,
+      "interpolated_channels": [
+        "Fp1",
+        "Fp2",
+        "Fz"
+      ],
+      "ica_components": 17,
+      "blink_components_removed": [
+        0
+      ],
+      "ica_iterations": 38,
+      "ica_converged": true
+    }
+  ],
+  "sources": [
+    {
+      "trial": 1,
+      "eeg_file": "data/EEG Data/Experiment 2 - Spoken/Trial 1/subject1.cnt",
+      "stimulus_file": "data/Stimulation Data/Experiment 2/Trial 1/subject1_all.csv"
+    },
+    {
+      "trial": 2,
+      "eeg_file": "data/EEG Data/Experiment 2 - Spoken/Trial 2/subject1.cnt",
+      "stimulus_file": "data/Stimulation Data/Experiment 2/Trial 2/subject1_all.csv"
+    },
+    {
+      "trial": 3,
+      "eeg_file": "data/EEG Data/Experiment 2 - Spoken/Trial 3/subject1.cnt",
+      "stimulus_file": "data/Stimulation Data/Experiment 2/Trial 3/subject1_all.csv"
+    },
+    {
+      "trial": 4,
+      "eeg_file": "data/EEG Data/Experiment 2 - Spoken/Trial 4/subject1.cnt",
+      "stimulus_file": "data/Stimulation Data/Experiment 2/Trial 4/subject1_all.csv"
+    },
+    {
+      "trial": 5,
+      "eeg_file": "data/EEG Data/Experiment 2 - Spoken/Trial 5/subject1.cnt",
+      "stimulus_file": "data/Stimulation Data/Experiment 2/Trial 5/subject1_all.csv"
+    }
+  ],
+  "notes": [
+    "The clock correction is approximate.",
+    "ICA removal uses frontal EEG channels as blink proxies.",
+    "Incomplete log events are retained only where full windows fit inside their actual recorded intervals.",
+    "Speech-related muscle activity may contribute; this is not thought-only detection.",
+    "Windows within a trial are correlated; test performance covers one recording."
+  ]
+}
