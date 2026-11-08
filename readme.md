@@ -2,6 +2,10 @@
 
 This project uses EEG recordings to detect the spoken word “activate” and double blinks. In the demo, activation starts a rotating arrow and a double blink switches the selected appliance on or off.
 
+## Demo
+
+https://github.com/user-attachments/assets/70374ab7-2611-48ac-8f31-bc60ae293d9a
+
 ## Setup
 
 Run these commands from the project folder:

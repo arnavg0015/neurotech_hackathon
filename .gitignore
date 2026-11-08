@@ -3,3 +3,4 @@ __pycache__/
 .ipynb_checkpoints/
 .DS_Store
 /demo/demo.mov
+/demo/demo.mp4
